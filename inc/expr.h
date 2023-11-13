@@ -3,7 +3,6 @@
 
 #include "common.h";
 
-using namespace std;
 
 class Expr {
 public:

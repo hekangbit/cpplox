@@ -1,15 +1,17 @@
 #include "common.h"
+#include "error.h"
+#include "scanner.h"
 
-using namespace std;
-
-bool hadError = false;
-
-void error(int line, string message) {
-  string res = "[line:";
-  res = res + to_string(line);
-  res = res + "], error:";
-  res = res + message;
-  cout << res << endl;
+void run(string &str) {
+  Scanner scanner(str);
+  scanner.ScanTokens();
+  cout << "finish scan" << endl;
+  auto &tokens = scanner.GetTokens();
+  cout << "tokens size = " << tokens.size() << endl;
+  for (auto &it : tokens) {
+    cout << it.GetText() << endl;
+  }
+  cout << "exit run" << endl;
 }
 
 int RunFile(string filename) {
@@ -21,13 +23,12 @@ int RunFile(string filename) {
   f.seekg(0, f.end);
   int64_t len = f.tellg();
   f.seekg(0, f.beg);
-
   char *buffer = new char[len];
   f.read(buffer, len);
-  string s(buffer);
-  cout << s << endl;
+  string str(buffer);
   f.close();
-  delete [] buffer;
+  delete[] buffer;
+  run(str);
   if (hadError) {
     exit(65);
   }
@@ -54,4 +55,3 @@ int main(int argc, char **args) {
 
   return 0;
 }
-

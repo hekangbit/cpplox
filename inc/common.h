@@ -7,5 +7,8 @@
 #include <stdint.h>
 #include <iostream>
 #include <fstream>
+#include <cassert>
+
+using namespace std;
 
 #endif
