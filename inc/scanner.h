@@ -7,14 +7,17 @@
 
 class Scanner {
 public:
-  Scanner(string str) : source(str) {};
+  Scanner(string str) : source(str){};
   void ScanToken();
   void ScanTokens();
   vector<Token> &GetTokens();
 
 private:
   bool IsAtEnd() const;
+  bool Match(char c);
+  char Peek() const;
   char Advance();
+  void ScanString();
 
   void AddToken(TokenType type);
   void AddToken(TokenType type, int32_t num);

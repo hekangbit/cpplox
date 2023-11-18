@@ -3,6 +3,24 @@
 
 bool Scanner::IsAtEnd() const { return current >= source.size(); }
 
+bool Scanner::Match(char c) {
+  if (IsAtEnd()) {
+    return false;
+  }
+  if (source[current] != c) {
+    return false;
+  }
+  current++;
+  return true;
+}
+
+char Scanner::Peek() const {
+  if (IsAtEnd()) {
+    return 0;
+  }
+  return source[current];
+}
+
 char Scanner::Advance() {
   assert(current <= source.size());
   return source[current++];
@@ -10,8 +28,6 @@ char Scanner::Advance() {
 
 void Scanner::AddToken(TokenType type) {
   string text = source.substr(start, current - start);
-  cout << source << endl;
-  cout << "start:" << start << ", end:" << current << ", text:" << text << endl;
   Token token(type, text, line);
   tokens.push_back(token);
 }
@@ -27,6 +43,8 @@ void Scanner::AddToken(TokenType type, string str) {
   Token token(type, text, str, line);
   tokens.push_back(token);
 }
+
+void Scanner::ScanString() {}
 
 void Scanner::ScanToken() {
   char c = Advance();
@@ -61,8 +79,36 @@ void Scanner::ScanToken() {
   case '*':
     AddToken(STAR);
     break;
+  case '!':
+    AddToken(Match('=') ? BANG_EQUAL : BANG);
+    break;
+  case '=':
+    AddToken(Match('=') ? EQUAL : ASSIGN);
+    break;
+  case '<':
+    AddToken(Match('=') ? LESS_EQUAL : LESS);
+    break;
+  case '>':
+    AddToken(Match('=') ? GREATER_EQUAL : GREATER);
+    break;
+  case '/':
+    if (Match('/')) {
+      while (Peek() != '\n' && !IsAtEnd()) {
+        Advance();
+      }
+    } else {
+      AddToken(SLASH);
+    }
+    break;
   case '\n':
     line++;
+    break;
+  case ' ':
+  case '\r':
+  case '\t':
+    break;
+  case '"':
+    ScanString();
     break;
   default:
     error(line, "Unexpected char.");

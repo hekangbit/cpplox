@@ -3,14 +3,11 @@
 
 #include "common.h";
 
-
 class Expr {
 public:
   Expr();
 
 private:
-
-
 };
 
 class LiteralEXpr : Expr {
@@ -19,14 +16,11 @@ public:
   LiteralEXpr(long num);
 
 private:
-
 };
 
 class BinaryExpr : Expr {
 public:
   BinaryExpr();
-
 };
-
 
 #endif
