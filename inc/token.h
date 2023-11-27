@@ -31,16 +31,17 @@ typedef enum {
   PRINT,
   RETURN,
   SUPER,
-  THIS,
+  _THIS,
   TRUE,
   FALSE,
   VAR,
   CLASS,
   FUN,
   IF,
-  ELSE,
+  _ELSE,
   FOR,
   WHILE,
+  NIL,
   TYPE_NUM
 } TokenType;
 

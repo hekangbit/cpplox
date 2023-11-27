@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "token.h"
+#include <map>
 #include <vector>
 
 class Scanner {
@@ -14,10 +15,14 @@ public:
 
 private:
   bool IsAtEnd() const;
+  bool IsDigit(char c) const;
+  bool IsAlpha(char c) const;
   bool Match(char c);
   char Peek() const;
   char Advance();
   void ScanString();
+  void ScanNumber();
+  void ScanIdentifier();
 
   void AddToken(TokenType type);
   void AddToken(TokenType type, int32_t num);
@@ -28,6 +33,7 @@ private:
   int32_t current = 0;
   int32_t line = 0;
   vector<Token> tokens;
+  static map<string, TokenType> keywords;
 };
 
 #endif

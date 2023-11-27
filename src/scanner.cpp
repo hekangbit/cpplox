@@ -1,7 +1,19 @@
 #include "scanner.h"
 #include "error.h"
 
+map<string, TokenType> Scanner::keywords = {
+    {"and", AND},     {"or", OR},      {"true", TRUE},   {"false", FALSE},
+    {"if", IF},       {"else", _ELSE}, {"for", FOR},     {"while", WHILE},
+    {"var", VAR},     {"this", _THIS}, {"super", SUPER}, {"return", RETURN},
+    {"print", PRINT}, {"fun", FUN},    {"class", CLASS}, {"nil", NIL}};
+
 bool Scanner::IsAtEnd() const { return current >= source.size(); }
+
+bool Scanner::IsDigit(char c) const { return c >= '0' && c <= '9'; }
+
+bool Scanner::IsAlpha(char c) const {
+  return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'));
+}
 
 bool Scanner::Match(char c) {
   if (IsAtEnd()) {
@@ -44,7 +56,17 @@ void Scanner::AddToken(TokenType type, string str) {
   tokens.push_back(token);
 }
 
-void Scanner::ScanString() {}
+void Scanner::ScanString() {
+  // TODO: make lexeme to string token
+}
+
+void Scanner::ScanNumber() {
+  // TODO: make lexeme to number token
+}
+
+void Scanner::ScanIdentifier() {
+  // TODO: make lexeme to identifier or keyword
+}
 
 void Scanner::ScanToken() {
   char c = Advance();
@@ -111,7 +133,13 @@ void Scanner::ScanToken() {
     ScanString();
     break;
   default:
-    error(line, "Unexpected char.");
+    if (IsDigit(c)) {
+      ScanNumber();
+    } else if (IsAlpha(c)) {
+      ScanIdentifier();
+    } else {
+      error(line, "Unexpected char.");
+    }
     break;
   }
 }
