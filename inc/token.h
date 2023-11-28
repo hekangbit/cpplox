@@ -59,7 +59,7 @@ class Token {
 public:
   Token(TokenType type, string lexeme, int32_t line)
       : type(type), lexeme(lexeme), line(line){};
-  Token(TokenType type, string lexeme, int32_t literalNum, int32_t line)
+  Token(TokenType type, string lexeme, double literalNum, int32_t line)
       : type(type), lexeme(lexeme), literalNum(literalNum), line(line){};
   Token(TokenType type, string lexeme, string literalStr, int32_t line)
       : type(type), lexeme(lexeme), literalStr(literalStr), line(line){};
@@ -68,7 +68,7 @@ public:
 
 private:
   TokenType type;
-  int32_t literalNum;
+  double literalNum;
   string literalStr;
   string lexeme;
   int32_t line;

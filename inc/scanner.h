@@ -20,13 +20,14 @@ private:
   bool IsAlphaNumeric(char c) const;
   bool Match(char c);
   char Peek() const;
+  char PeekNext() const;
   char Advance();
   void ScanString();
   void ScanNumber();
   void ScanIdentifier();
 
   void AddToken(TokenType type);
-  void AddToken(TokenType type, int32_t num);
+  void AddToken(TokenType type, double num);
   void AddToken(TokenType type, string str);
 
   string source;

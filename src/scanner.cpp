@@ -35,6 +35,13 @@ char Scanner::Peek() const {
   return source[current];
 }
 
+char Scanner::PeekNext() const {
+  if (current + 1 >= source.size()) {
+    return 0;
+  }
+  return source[current + 1];
+}
+
 char Scanner::Advance() {
   assert(current <= source.size());
   return source[current++];
@@ -46,7 +53,7 @@ void Scanner::AddToken(TokenType type) {
   tokens.push_back(token);
 }
 
-void Scanner::AddToken(TokenType type, int32_t num) {
+void Scanner::AddToken(TokenType type, double num) {
   string text = source.substr(start, current - start);
   Token token(type, text, num, line);
   tokens.push_back(token);
@@ -59,7 +66,6 @@ void Scanner::AddToken(TokenType type, string str) {
 }
 
 void Scanner::ScanString() {
-  // TODO: make lexeme to string token
   while (Peek() != '"' && !IsAtEnd()) {
     if (Peek() == '\n')
       line++;
@@ -75,7 +81,17 @@ void Scanner::ScanString() {
 }
 
 void Scanner::ScanNumber() {
-  // TODO: make lexeme to number token
+  while (IsDigit(Peek())) {
+    Advance();
+  }
+  if (Peek() == '.' && IsDigit(PeekNext())) {
+    Advance();
+    while (IsDigit(Peek())) {
+      Advance();
+    }
+  }
+  double num = stod(source.substr(start, current - start));
+  AddToken(NUMBER, num);
 }
 
 void Scanner::ScanIdentifier() {
