@@ -15,6 +15,8 @@ bool Scanner::IsAlpha(char c) const {
   return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'));
 }
 
+bool Scanner::IsAlphaNumeric(char c) const { return IsAlpha(c) || IsDigit(c); }
+
 bool Scanner::Match(char c) {
   if (IsAtEnd()) {
     return false;
@@ -45,19 +47,31 @@ void Scanner::AddToken(TokenType type) {
 }
 
 void Scanner::AddToken(TokenType type, int32_t num) {
-  string text = source.substr(start, current);
+  string text = source.substr(start, current - start);
   Token token(type, text, num, line);
   tokens.push_back(token);
 }
 
 void Scanner::AddToken(TokenType type, string str) {
-  string text = source.substr(start, current);
+  string text = source.substr(start, current - start);
   Token token(type, text, str, line);
   tokens.push_back(token);
 }
 
 void Scanner::ScanString() {
   // TODO: make lexeme to string token
+  while (Peek() != '"' && !IsAtEnd()) {
+    if (Peek() == '\n')
+      line++;
+    Advance();
+  }
+  if (IsAtEnd()) {
+    error(line, "Invalid literal string");
+    return;
+  }
+  Advance();
+  string literal = source.substr(start + 1, current - start - 2);
+  AddToken(STRING, literal);
 }
 
 void Scanner::ScanNumber() {
