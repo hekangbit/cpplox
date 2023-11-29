@@ -1,5 +1,6 @@
 #include "common.h"
 #include "error.h"
+#include "parser.h"
 #include "scanner.h"
 
 void run(string &str) {
@@ -8,10 +9,12 @@ void run(string &str) {
   cout << "finish scan" << endl;
   auto &tokens = scanner.GetTokens();
   cout << "tokens size = " << tokens.size() << endl;
+  cout << "token result list:" << endl;
   for (auto &it : tokens) {
     cout << it.GetText() << endl;
   }
-  cout << "exit run" << endl;
+
+  Parser parser(scanner.GetTokens());
 }
 
 int RunFile(string filename) {
