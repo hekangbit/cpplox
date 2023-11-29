@@ -95,7 +95,15 @@ void Scanner::ScanNumber() {
 }
 
 void Scanner::ScanIdentifier() {
-  // TODO: make lexeme to identifier or keyword
+  while (IsAlphaNumeric(Peek())) {
+    Advance();
+  }
+  string text = source.substr(start, current - start);
+  if (keywords.count(text) > 0) {
+    AddToken(keywords[text]);
+    return;
+  }
+  AddToken(IDENTIFIER);
 }
 
 void Scanner::ScanToken() {

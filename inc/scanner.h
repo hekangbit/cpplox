@@ -33,7 +33,7 @@ private:
   string source;
   int32_t start = 0;
   int32_t current = 0;
-  int32_t line = 0;
+  int32_t line = 1;
   vector<Token> tokens;
   static map<string, TokenType> keywords;
 };
