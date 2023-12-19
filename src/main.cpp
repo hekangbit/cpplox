@@ -1,6 +1,7 @@
 #include "common.h"
 #include "error.h"
 #include "parser.h"
+#include "expr.h"
 #include "scanner.h"
 
 void run(string &str) {
@@ -15,6 +16,8 @@ void run(string &str) {
   }
 
   Parser parser(scanner.GetTokens());
+
+  Expr *expression = new BinaryExpr(new UnaryExpr(new Token(MINUS, "-", 1), new NumberLiteralExpr(123)),  new Token(STAR, "*", 1),  new GroupingExpr(new NumberLiteralExpr(45.67)));
 }
 
 int RunFile(string filename) {
