@@ -48,18 +48,17 @@ typedef enum {
 class Token {
 public:
   Token(TokenType type, string lexeme, int32_t line)
-      : type(type), lexeme(lexeme), line(line){};
+      : type(type), lexeme(lexeme), line(line) {}
   Token(TokenType type, string lexeme, double literalNum, int32_t line)
-      : type(type), lexeme(lexeme), literalNum(literalNum), line(line){};
+      : type(type), lexeme(lexeme), literalNum(literalNum), line(line) {}
   Token(TokenType type, string lexeme, string literalStr, int32_t line)
-      : type(type), lexeme(lexeme), literalStr(literalStr), line(line){};
+      : type(type), lexeme(lexeme), literalStr(literalStr), line(line) {}
   string GetText() const {
     string text = "token [type:";
     return text + to_string((uint32_t)type) + ", lexeme:" + lexeme +
            ", line:" + to_string(line);
-  };
+  }
 
-private:
   TokenType type;
   double literalNum;
   string literalStr;

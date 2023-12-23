@@ -17,12 +17,24 @@ void run(string &str) {
   }
 
   Parser parser(scanner.GetTokens());
+  {
+    Expr *expr =
+        new BinaryExpr(new NumberLiteralExpr(1), new Token(STAR, "+", 1),
+                       new NumberLiteralExpr(2));
+    AstPrinter printer;
+    printer.Walk(*expr);
+    cout << printer.Get();
+  }
 
-  Expr *expression = new BinaryExpr(
-      new UnaryExpr(new Token(MINUS, "-", 1), new NumberLiteralExpr(123)),
-      new Token(STAR, "*", 1), new GroupingExpr(new NumberLiteralExpr(45.67)));
-  AstPrinter printer;
-  printer.Walk(*expression);
+  {
+    Expr *expr = new BinaryExpr(
+        new UnaryExpr(new Token(MINUS, "-", 1), new NumberLiteralExpr(123)),
+        new Token(STAR, "*", 1),
+        new GroupingExpr(new NumberLiteralExpr(45.67)));
+    AstPrinter printer;
+    printer.Walk(*expr);
+    cout << printer.Get();
+  }
 }
 
 int RunFile(string filename) {
