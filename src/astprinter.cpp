@@ -1,24 +1,13 @@
 #include "astprinter.h"
 
+void AstPrinter::Walk(Expr &expr) { expr.Accept(*this); }
 
-void AstPrinter::print(Expr expr) {
+void AstPrinter::Visit(NumberLiteralExpr &expr) {}
 
-}
-string AstPrinter::visit(NumberLiteralExpr) {
+void AstPrinter::Visit(StringLiteralExpr &expr) {}
 
-}
-string AstPrinter::visit(StringLiteralExpr) {
+void AstPrinter::Visit(UnaryExpr &expr) {}
 
-}
-string AstPrinter::visit(UnaryExpr) {
+void AstPrinter::Visit(BinaryExpr &expr) {}
 
-}
-string AstPrinter::visit(BinaryExpr) {
-
-}
-string AstPrinter::visit(BinaryExpr) {
-
-}
-string AstPrinter::visit(NumberLiteralExpr) {
-
-}
+void AstPrinter::Visit(GroupingExpr &expr) {}
