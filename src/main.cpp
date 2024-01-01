@@ -17,6 +17,7 @@ void run(string &str) {
   }
 
   Parser parser(scanner.GetTokens());
+
   {
     Expr *expr =
         new BinaryExpr(new NumberLiteralExpr(1), new Token(STAR, "+", 1),

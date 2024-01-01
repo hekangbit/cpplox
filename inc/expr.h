@@ -9,6 +9,8 @@ class StringLiteralExpr;
 class UnaryExpr;
 class BinaryExpr;
 class GroupingExpr;
+class NullLiteralExpr;
+class BoolLiteralExpr;
 
 class Visitor {
 public:
@@ -17,12 +19,27 @@ public:
   virtual void Visit(UnaryExpr &expr) = 0;
   virtual void Visit(BinaryExpr &expr) = 0;
   virtual void Visit(GroupingExpr &expr) = 0;
+  virtual void Visit(NullLiteralExpr &expr) = 0;
+  virtual void Visit(BoolLiteralExpr &expr) = 0;
 };
 
 class Expr {
 public:
   Expr(){};
   virtual void Accept(Visitor &visitor) {}
+};
+
+class NullLiteralExpr : public Expr {
+public:
+  NullLiteralExpr() {}
+  void Accept(Visitor &visitor) { visitor.Visit(*this); }
+};
+
+class BoolLiteralExpr : public Expr {
+public:
+  BoolLiteralExpr(bool val) : val(val) {}
+  void Accept(Visitor &visitor) { visitor.Visit(*this); }
+  bool val;
 };
 
 class NumberLiteralExpr : public Expr {

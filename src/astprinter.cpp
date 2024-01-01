@@ -7,7 +7,14 @@ void AstPrinter::Walk(Expr &expr) {
 
 void AstPrinter::Visit(NumberLiteralExpr &expr) { cout << expr.num; }
 
-void AstPrinter::Visit(StringLiteralExpr &expr) {}
+void AstPrinter::Visit(StringLiteralExpr &expr) { cout << expr.str; }
+
+void AstPrinter::Visit(NullLiteralExpr &expr) { cout << "null"; }
+
+void AstPrinter::Visit(BoolLiteralExpr &expr) {
+  string res = expr.val ? "true" : "false";
+  cout << res;
+}
 
 void AstPrinter::Visit(UnaryExpr &expr) {}
 

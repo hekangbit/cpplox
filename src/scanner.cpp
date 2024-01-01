@@ -143,7 +143,7 @@ void Scanner::ScanToken() {
     AddToken(Match('=') ? BANG_EQUAL : BANG);
     break;
   case '=':
-    AddToken(Match('=') ? EQUAL : ASSIGN);
+    AddToken(Match('=') ? EQUAL_EQUAL : EQUAL);
     break;
   case '<':
     AddToken(Match('=') ? LESS_EQUAL : LESS);
