@@ -36,6 +36,15 @@ void run(string &str) {
     printer.Walk(*expr);
     cout << printer.Get();
   }
+
+  {
+    Expr *expr = parser.Parse();
+    AstPrinter printer;
+    if (expr) {
+      printer.Walk(*expr);
+      cout << printer.Get();
+    }
+  }
 }
 
 int RunFile(string filename) {

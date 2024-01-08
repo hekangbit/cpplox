@@ -122,15 +122,19 @@ Expr *Parser::Primary() {
     Consume(RIGHT_PAREN, "Expect ')' after expression.");
     return new GroupingExpr(expr);
   }
+  cout<< "no more expr token!!!" << endl;
   return nullptr;
 }
 
 ParserException Parser::Error(Token *token, string message) {
   if (token == nullptr) {
-    // message = " at end" + message;
-    error(token->line, message);
+    message = "at the end, " + message;
+    int32_t last_line_num = 0;
+    if (tokens.size()) {
+      last_line_num = tokens.back().line;
+    }
+    error(last_line_num, message);
   } else {
-    // message = " at '" + token->lexeme + message;
     error(token->line, message);
   }
   return ParserException();

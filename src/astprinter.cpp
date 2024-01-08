@@ -16,14 +16,21 @@ void AstPrinter::Visit(BoolLiteralExpr &expr) {
   cout << res;
 }
 
-void AstPrinter::Visit(UnaryExpr &expr) {}
+void AstPrinter::Visit(UnaryExpr &expr) {
+  vector<Expr *> exprs{expr.right};
+  Parenthesize(expr.op.lexeme, exprs);
+}
 
 void AstPrinter::Visit(BinaryExpr &expr) {
   vector<Expr *> exprs{expr.left, expr.right};
   Parenthesize(expr.op.lexeme, exprs);
 }
 
-void AstPrinter::Visit(GroupingExpr &expr) {}
+void AstPrinter::Visit(GroupingExpr &expr) {
+  cout << "(";
+  expr.expr->Accept(*this);
+  cout << ")";
+}
 
 void AstPrinter::Parenthesize(string &name, vector<Expr *> &exprs) {
   cout << "(" << name;
