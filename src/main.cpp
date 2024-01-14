@@ -38,8 +38,15 @@ void run(string &str) {
   }
 
   {
+    cout << "parse 1st expr" << endl;
     Expr *expr = parser.Parse();
     AstPrinter printer;
+    if (expr) {
+      printer.Walk(*expr);
+      cout << printer.Get();
+    }
+    cout << "parse 2nd expr" << endl;
+    expr = parser.Parse();
     if (expr) {
       printer.Walk(*expr);
       cout << printer.Get();

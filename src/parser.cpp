@@ -119,10 +119,9 @@ Expr *Parser::Primary() {
   }
   if (Match({LEFT_PAREN})) {
     Expr *expr = Expression();
-    Consume(RIGHT_PAREN, "Expect ')' after expression.");
+    Consume(RIGHT_PAREN, "expect ')' after expression.");
     return new GroupingExpr(expr);
   }
-  cout<< "no more expr token!!!" << endl;
   return nullptr;
 }
 
@@ -135,6 +134,7 @@ ParserException Parser::Error(Token *token, string message) {
     }
     error(last_line_num, message);
   } else {
+    message = "found token " + token->lexeme + ", " + message;
     error(token->line, message);
   }
   return ParserException();
