@@ -8,4 +8,5 @@ void error(int32_t line, const string &message) {
   res = res + "], error: ";
   res = res + message;
   cout << res << endl;
+  hadError = true;
 }

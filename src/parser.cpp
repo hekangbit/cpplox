@@ -122,6 +122,7 @@ Expr *Parser::Primary() {
     Consume(RIGHT_PAREN, "expect ')' after expression.");
     return new GroupingExpr(expr);
   }
+  throw Error(Peek(), "expect expr.");
   return nullptr;
 }
 
