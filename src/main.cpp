@@ -5,6 +5,8 @@
 #include "parser.h"
 #include "scanner.h"
 
+bool hadRuntimeError = false;
+
 void run(string &str) {
   Scanner scanner(str);
   scanner.ScanTokens();
@@ -24,7 +26,6 @@ void run(string &str) {
                        new NumberLiteralExpr(2));
     AstPrinter printer;
     printer.Walk(*expr);
-    cout << printer.Get();
   }
 
   {
@@ -34,7 +35,6 @@ void run(string &str) {
         new GroupingExpr(new NumberLiteralExpr(45.67)));
     AstPrinter printer;
     printer.Walk(*expr);
-    cout << printer.Get();
   }
 
   {
@@ -43,13 +43,11 @@ void run(string &str) {
     AstPrinter printer;
     if (expr) {
       printer.Walk(*expr);
-      cout << printer.Get();
     }
     cout << "parse 2nd expr" << endl;
     expr = parser.Parse();
     if (expr) {
       printer.Walk(*expr);
-      cout << printer.Get();
     }
   }
 }
@@ -71,6 +69,9 @@ int RunFile(string filename) {
   run(str);
   if (hadError) {
     exit(65);
+  }
+  if (hadRuntimeError) {
+    exit(70);
   }
   return 0;
 }
