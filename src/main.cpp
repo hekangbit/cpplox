@@ -1,9 +1,10 @@
-#include "astprinter.h"
 #include "common.h"
 #include "error.h"
-#include "expr.h"
-#include "parser.h"
 #include "scanner.h"
+#include "parser.h"
+#include "expr.h"
+#include "astprinter.h"
+#include "interpreter.h"
 
 bool hadRuntimeError = false;
 
@@ -19,37 +20,10 @@ void run(string &str) {
   }
 
   Parser parser(scanner.GetTokens());
+  vector<Stmt*> statements = parser.Parse();
 
-  {
-    Expr *expr =
-        new BinaryExpr(new NumberLiteralExpr(1), new Token(STAR, "+", 1),
-                       new NumberLiteralExpr(2));
-    AstPrinter printer;
-    printer.Walk(*expr);
-  }
-
-  {
-    Expr *expr = new BinaryExpr(
-        new UnaryExpr(new Token(MINUS, "-", 1), new NumberLiteralExpr(123)),
-        new Token(STAR, "*", 1),
-        new GroupingExpr(new NumberLiteralExpr(45.67)));
-    AstPrinter printer;
-    printer.Walk(*expr);
-  }
-
-  {
-    cout << "parse 1st expr" << endl;
-    Expr *expr = parser.Parse();
-    AstPrinter printer;
-    if (expr) {
-      printer.Walk(*expr);
-    }
-    cout << "parse 2nd expr" << endl;
-    expr = parser.Parse();
-    if (expr) {
-      printer.Walk(*expr);
-    }
-  }
+  Interpreter interpreter(statements);
+  // interpreter.Execute();
 }
 
 int RunFile(string filename) {

@@ -8,7 +8,7 @@
 
 class Scanner {
 public:
-  Scanner(string str) : source(str){};
+  Scanner(string str) : source(str){}
   void ScanToken();
   void ScanTokens();
   vector<Token> &GetTokens();

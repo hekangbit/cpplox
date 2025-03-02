@@ -1,20 +1,24 @@
-#include "common.h"
-#include "expr.h"
 #include <vector>
+#include "common.h"
+#include "visitor.h"
+#include "expr.h"
+#include "stmt.h"
 
 class AstPrinter : public Visitor {
 public:
   AstPrinter() {}
   ~AstPrinter() {}
   void Walk(Expr &expr);
-  virtual void Visit(NumberLiteralExpr &expr);
-  virtual void Visit(StringLiteralExpr &expr);
-  virtual void Visit(UnaryExpr &expr);
-  virtual void Visit(BinaryExpr &expr);
-  virtual void Visit(GroupingExpr &expr);
-  virtual void Visit(NullLiteralExpr &expr);
-  virtual void Visit(BoolLiteralExpr &expr);
-  void Parenthesize(string &name, vector<Expr *> &exprs);
-
+  string Parenthesize(string &name, vector<Expr *> &exprs);
+  virtual LoxValue Visit(NumberLiteralExpr &expr);
+  virtual LoxValue Visit(StringLiteralExpr &expr);
+  virtual LoxValue Visit(UnaryExpr &expr);
+  virtual LoxValue Visit(BinaryExpr &expr);
+  virtual LoxValue Visit(GroupingExpr &expr);
+  virtual LoxValue Visit(NullLiteralExpr &expr);
+  virtual LoxValue Visit(BoolLiteralExpr &expr);
+  virtual void Visit(ExprStmt &stmt);
+  virtual void Visit(PrintStmt &stmt);
+  virtual void Visit(VarStmt &stmt);
 private:
 };

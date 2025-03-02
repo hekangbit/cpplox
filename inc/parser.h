@@ -1,11 +1,13 @@
 #ifndef PARSER_H
 #define PARSER_H
-#include "common.h"
-#include "error.h"
-#include "expr.h"
-#include "token.h"
+
 #include <exception>
 #include <vector>
+#include "common.h"
+#include "error.h"
+#include "token.h"
+#include "expr.h"
+#include "stmt.h"
 
 class ParserException : public exception {
 public:
@@ -14,16 +16,7 @@ public:
 
 class Parser {
 public:
-  Parser(vector<Token> tokens) : tokens(tokens){};
-
-  Expr *Parse();
-  Expr *Expression();
-  Expr *Equality();
-  Expr *Comparison();
-  Expr *Term();
-  Expr *Factor();
-  Expr *Unary();
-  Expr *Primary();
+  Parser(vector<Token> tokens) : tokens(tokens) {}
 
   bool IsAtEnd();
   Token *Peek();
@@ -33,6 +26,17 @@ public:
   bool Check(TokenType type);
   bool Match(initializer_list<TokenType> token_types);
   ParserException Error(Token *token, string message);
+
+  Expr *Equality();
+  Expr *Comparison();
+  Expr *Term();
+  Expr *Factor();
+  Expr *Unary();
+  Expr *Primary();
+  Expr *Expression();
+  Stmt *VarDeclaration();
+  Stmt *Declaration();
+  vector<Stmt*> Parse();
 
 private:
   vector<Token> tokens;

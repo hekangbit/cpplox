@@ -1,6 +1,4 @@
 #include "parser.h"
-#include "astprinter.h"
-#include "expr.h"
 
 bool Parser::IsAtEnd() { return current >= tokens.size(); }
 
@@ -50,7 +48,20 @@ Token *Parser::Peek() {
   return &(tokens[current]);
 }
 
-Expr *Parser::Expression() { return Equality(); }
+ParserException Parser::Error(Token *token, string message) {
+  if (token == nullptr) {
+    message = "at the end, " + message;
+    int32_t last_line_num = 0;
+    if (tokens.size()) {
+      last_line_num = tokens.back().line;
+    }
+    error(last_line_num, message);
+  } else {
+    message = "found token " + token->lexeme + ", " + message;
+    error(token->line, message);
+  }
+  return ParserException();
+}
 
 Expr *Parser::Equality() {
   Expr *expr = Comparison();
@@ -126,28 +137,40 @@ Expr *Parser::Primary() {
   return nullptr;
 }
 
-ParserException Parser::Error(Token *token, string message) {
-  if (token == nullptr) {
-    message = "at the end, " + message;
-    int32_t last_line_num = 0;
-    if (tokens.size()) {
-      last_line_num = tokens.back().line;
-    }
-    error(last_line_num, message);
-  } else {
-    message = "found token " + token->lexeme + ", " + message;
-    error(token->line, message);
-  }
-  return ParserException();
+Expr *Parser::Expression() { return Equality(); }
+
+Stmt *Parser::VarDeclaration() {
+  Stmt *stmt = new VarStmt(Peek(), Expression());
+  Consume(SEMICOLON, "Expect ';' in var declaration stmtament");
+  return stmt;
 }
 
-Expr *Parser::Parse() {
+Stmt *Parser::Declaration() {
+  Stmt *result;
   try {
-    return Expression();
+    if (Match({VAR})) {
+      result = VarDeclaration();
+    } else if (Match({PRINT})) {
+      result = new PrintStmt(Peek(), Expression());
+      Consume(SEMICOLON, "Expect ';' in print stmtament");
+    } else {
+      result = new ExprStmt(Expression());
+      Consume(SEMICOLON, "Expect ';' in expr stmtament");
+    }
+    return result;
+
   } catch (const ParserException &e) {
     cout << "Catch Parser exception" << endl;
     cout << e.what() << endl;
+    // syncnize
     return nullptr;
   }
-  return nullptr;
+}
+
+vector<Stmt*> Parser::Parse() {
+  vector<Stmt*> statements;
+  while (!IsAtEnd()) {
+    statements.push_back(Declaration());
+  }
+  return statements;
 }
