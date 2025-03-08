@@ -54,9 +54,9 @@ public:
   Token(TokenType type, string lexeme, string literalStr, int32_t line)
       : type(type), lexeme(lexeme), literalStr(literalStr), line(line) {}
   string GetText() const {
-    string text = "token [type:";
-    return text + to_string((uint32_t)type) + ", lexeme:" + lexeme +
-           ", line:" + to_string(line);
+    string text = "token [ type:";
+    return text + to_string((uint32_t)type) + ", lexeme: <" + lexeme +
+           ">, line:" + to_string(line) + " ]";
   }
 
   TokenType type;

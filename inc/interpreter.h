@@ -1,12 +1,24 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
+#include <exception>
 #include <vector>
 #include "common.h"
+#include "error.h"
 #include "visitor.h"
 #include "value.h"
 #include "stmt.h"
 #include "expr.h"
+
+
+
+class RuntimeException : public exception {
+public:
+  RuntimeException(Token token, string message) : token(token), message(message) {}
+  const char *what() const throw() { return message.c_str(); }
+  Token token;
+  string message;
+};
 
 class Interpreter : public Visitor {
 public:

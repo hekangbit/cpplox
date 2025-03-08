@@ -51,16 +51,16 @@ Token *Parser::Peek() {
 ParserException Parser::Error(Token *token, string message) {
   if (token == nullptr) {
     message = "at the end, " + message;
-    int32_t last_line_num = 0;
-    if (tokens.size()) {
-      last_line_num = tokens.back().line;
-    }
-    error(last_line_num, message);
+    error(tokens.size() ? tokens.back().line : 0, message);
   } else {
     message = "found token " + token->lexeme + ", " + message;
     error(token->line, message);
   }
   return ParserException();
+}
+
+void Parser::Synchronize() {
+
 }
 
 Expr *Parser::Equality() {
@@ -141,7 +141,7 @@ Expr *Parser::Expression() { return Equality(); }
 
 Stmt *Parser::VarDeclaration() {
   Stmt *stmt = new VarStmt(Peek(), Expression());
-  Consume(SEMICOLON, "Expect ';' in var declaration stmtament");
+  Consume(SEMICOLON, "Expect ';' in var declaration statement");
   return stmt;
 }
 
@@ -152,17 +152,17 @@ Stmt *Parser::Declaration() {
       result = VarDeclaration();
     } else if (Match({PRINT})) {
       result = new PrintStmt(Peek(), Expression());
-      Consume(SEMICOLON, "Expect ';' in print stmtament");
+      Consume(SEMICOLON, "Expect ';' in print statement");
     } else {
       result = new ExprStmt(Expression());
-      Consume(SEMICOLON, "Expect ';' in expr stmtament");
+      Consume(SEMICOLON, "Expect ';' in expr statement");
     }
     return result;
 
   } catch (const ParserException &e) {
     cout << "Catch Parser exception" << endl;
-    cout << e.what() << endl;
-    // syncnize
+    cerr << e.what() << endl;
+    Synchronize();
     return nullptr;
   }
 }

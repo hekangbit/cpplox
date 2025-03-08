@@ -26,6 +26,7 @@ public:
   bool Check(TokenType type);
   bool Match(initializer_list<TokenType> token_types);
   ParserException Error(Token *token, string message);
+  void Synchronize();
 
   Expr *Equality();
   Expr *Comparison();

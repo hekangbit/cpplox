@@ -23,7 +23,7 @@ void run(string &str) {
   vector<Stmt*> statements = parser.Parse();
 
   Interpreter interpreter(statements);
-  // interpreter.Execute();
+  interpreter.Execute();
 }
 
 int RunFile(string filename) {
