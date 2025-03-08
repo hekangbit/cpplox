@@ -10,6 +10,23 @@ public:
   LoxValue() : type(ValueType::NIL_T) {}
   LoxValue(double num) : type(ValueType::NUM_T), num(num) {}
   LoxValue(string str) : type(ValueType::STR_T), str(str) {}
+  LoxValue(const LoxValue& other) {
+    this->type = other.type;
+    if (other.type == ValueType::NUM_T) {
+      this->num = other.num;
+    } else if (other.type == ValueType::STR_T) {
+      this->str = other.str;
+    }
+  }
+  LoxValue& operator=(const LoxValue& other) {
+    this->type = other.type;
+    if (other.type == ValueType::NUM_T) {
+      this->num = other.num;
+    } else if (other.type == ValueType::STR_T) {
+      this->str = other.str;
+    }
+    return *this;
+  }
   ~LoxValue() {}
 
   bool IsNil() const { return type == ValueType::NIL_T; }

@@ -11,13 +11,6 @@ bool hadRuntimeError = false;
 void run(string &str) {
   Scanner scanner(str);
   scanner.ScanTokens();
-  cout << "finish scan" << endl;
-  auto &tokens = scanner.GetTokens();
-  cout << "tokens size = " << tokens.size() << endl;
-  cout << "token result list:" << endl;
-  for (auto &it : tokens) {
-    cout << it.GetText() << endl;
-  }
 
   Parser parser(scanner.GetTokens());
   vector<Stmt*> statements = parser.Parse();

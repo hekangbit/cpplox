@@ -10,6 +10,7 @@ class BinaryExpr;
 class GroupingExpr;
 class NullLiteralExpr;
 class BoolLiteralExpr;
+class VariableExpr;
 class ExprStmt;
 class PrintStmt;
 class VarStmt;
@@ -24,6 +25,7 @@ public:
   virtual LoxValue Visit(GroupingExpr &expr) = 0;
   virtual LoxValue Visit(NullLiteralExpr &expr) = 0;
   virtual LoxValue Visit(BoolLiteralExpr &expr) = 0;
+  virtual LoxValue Visit(VariableExpr &expr) = 0;
   virtual void Visit(ExprStmt &stmt) = 0;
   virtual void Visit(PrintStmt &stmt) = 0;
   virtual void Visit(VarStmt &stmt) = 0;

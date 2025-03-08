@@ -190,4 +190,13 @@ void Scanner::ScanTokens() {
   }
 }
 
+void Scanner::Dump() {
+  cout << "finish scan" << endl;
+  cout << "tokens size = " << tokens.size() << endl;
+  cout << "token result list:" << endl;
+  for (auto &it : tokens) {
+    cout << it.GetText() << endl;
+  }
+}
+
 vector<Token> &Scanner::GetTokens() { return tokens; }

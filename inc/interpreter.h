@@ -3,6 +3,7 @@
 
 #include <exception>
 #include <vector>
+#include <unordered_map>
 #include "common.h"
 #include "error.h"
 #include "visitor.h"
@@ -20,6 +21,15 @@ public:
   string message;
 };
 
+class Enviroment {
+public:
+  void Define(string name, const LoxValue value);
+  LoxValue Get(string name);
+
+private:
+  unordered_map<string, LoxValue> values;
+};
+
 class Interpreter : public Visitor {
 public:
   Interpreter(vector<Stmt*> statements) : statements(statements) {}
@@ -32,6 +42,7 @@ public:
   virtual LoxValue Visit(GroupingExpr &expr);
   virtual LoxValue Visit(NullLiteralExpr &expr);
   virtual LoxValue Visit(BoolLiteralExpr &expr);
+  virtual LoxValue Visit(VariableExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(VarStmt &stmt);
@@ -41,6 +52,7 @@ public:
 
 private:
   vector<Stmt*> statements;
+  Enviroment global_env;
 };
 
 #endif

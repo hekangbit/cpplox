@@ -133,6 +133,9 @@ Expr *Parser::Primary() {
     Consume(RIGHT_PAREN, "expect ')' after expression.");
     return new GroupingExpr(expr);
   }
+  if (Match({IDENTIFIER})) {
+    return new VariableExpr(Previous());
+  }
   throw Error(Peek(), "expect expr.");
   return nullptr;
 }
@@ -140,9 +143,13 @@ Expr *Parser::Primary() {
 Expr *Parser::Expression() { return Equality(); }
 
 Stmt *Parser::VarDeclaration() {
-  Stmt *stmt = new VarStmt(Peek(), Expression());
+  Token *token = Consume(IDENTIFIER, "Expect a variable name");
+  Expr *initializer = nullptr;
+  if (Match({EQUAL})) {
+    initializer = Expression();
+  }
   Consume(SEMICOLON, "Expect ';' in var declaration statement");
-  return stmt;
+  return new VarStmt(token, initializer);
 }
 
 Stmt *Parser::Declaration() {

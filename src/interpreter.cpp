@@ -1,6 +1,17 @@
 #include "interpreter.h"
 
 
+void Enviroment::Define(string name, const LoxValue value) {
+  values[name] = value;
+}
+
+LoxValue Enviroment::Get(string name) {
+  if (values.count(name)) {
+    return values[name];
+  }
+  return LoxValue();
+}
+
 LoxValue Interpreter::Visit(NumberLiteralExpr &expr) {
   return LoxValue(expr.num);
 }
@@ -53,6 +64,10 @@ LoxValue Interpreter::Visit(BoolLiteralExpr &expr) {
   return LoxValue(string("false"));
 }
 
+LoxValue Interpreter::Visit(VariableExpr &expr) {
+  return global_env.Get(expr.var.lexeme);
+}
+
 void Interpreter::Visit(ExprStmt &stmt) {
   LoxValue value = Evaluate(*(stmt.expr));
 }
@@ -69,7 +84,7 @@ void Interpreter::Visit(PrintStmt &stmt) {
 }
 
 void Interpreter::Visit(VarStmt &stmt) {
-
+  global_env.Define(stmt.token->lexeme, Evaluate(*(stmt.expr)));
 }
 
 LoxValue Interpreter::Evaluate(Expr &expr) {

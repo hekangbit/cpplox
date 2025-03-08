@@ -11,6 +11,7 @@ public:
   Scanner(string str) : source(str){}
   void ScanToken();
   void ScanTokens();
+  void Dump();
   vector<Token> &GetTokens();
 
 private:

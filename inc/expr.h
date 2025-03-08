@@ -64,4 +64,11 @@ public:
   Expr *expr;
 };
 
+class VariableExpr : public Expr {
+  public:
+    VariableExpr(Token *var) : var(*var) {}
+    LoxValue Accept(Visitor &visitor) { return visitor.Visit(*this); }
+    Token var;
+  };
+
 #endif

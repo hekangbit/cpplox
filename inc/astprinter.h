@@ -17,6 +17,7 @@ public:
   virtual LoxValue Visit(GroupingExpr &expr);
   virtual LoxValue Visit(NullLiteralExpr &expr);
   virtual LoxValue Visit(BoolLiteralExpr &expr);
+  virtual LoxValue Visit(VariableExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(VarStmt &stmt);
