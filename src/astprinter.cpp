@@ -20,7 +20,7 @@ string AstPrinter::Parenthesize(string &name, vector<Expr *> &exprs) {
   return res;
 }
 
-LoxValue AstPrinter::Visit(NumberLiteralExpr &expr){
+LoxValue AstPrinter::Visit(NumberLiteralExpr &expr) {
   // cout << expr.num;
   return to_string(expr.num);
 }
@@ -63,18 +63,10 @@ LoxValue AstPrinter::Visit(GroupingExpr &expr) {
   return res;
 }
 
-LoxValue AstPrinter::Visit(VariableExpr &expr) {
-  return expr.var.lexeme;
-}
+LoxValue AstPrinter::Visit(VariableExpr &expr) { return expr.var.lexeme; }
 
-void AstPrinter::Visit(ExprStmt &stmt) {
+void AstPrinter::Visit(ExprStmt &stmt) {}
 
-}
+void AstPrinter::Visit(PrintStmt &stmt) {}
 
-void AstPrinter::Visit(PrintStmt &stmt) {
-  
-}
-
-void AstPrinter::Visit(VarStmt &stmt) {
-
-}
+void AstPrinter::Visit(VarStmt &stmt) {}

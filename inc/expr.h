@@ -3,8 +3,8 @@
 
 #include "common.h"
 #include "token.h"
-#include "visitor.h"
 #include "value.h"
+#include "visitor.h"
 
 class Expr {
 public:
@@ -65,10 +65,10 @@ public:
 };
 
 class VariableExpr : public Expr {
-  public:
-    VariableExpr(Token *var) : var(*var) {}
-    LoxValue Accept(Visitor &visitor) { return visitor.Visit(*this); }
-    Token var;
-  };
+public:
+  VariableExpr(Token *var) : var(*var) {}
+  LoxValue Accept(Visitor &visitor) { return visitor.Visit(*this); }
+  Token var;
+};
 
 #endif

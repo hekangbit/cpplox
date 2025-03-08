@@ -3,14 +3,14 @@
 
 #include "common.h"
 
-enum class ValueType {NIL_T, NUM_T, STR_T};
+enum class ValueType { NIL_T, NUM_T, STR_T };
 
 class LoxValue {
 public:
   LoxValue() : type(ValueType::NIL_T) {}
   LoxValue(double num) : type(ValueType::NUM_T), num(num) {}
   LoxValue(string str) : type(ValueType::STR_T), str(str) {}
-  LoxValue(const LoxValue& other) {
+  LoxValue(const LoxValue &other) {
     this->type = other.type;
     if (other.type == ValueType::NUM_T) {
       this->num = other.num;
@@ -18,7 +18,7 @@ public:
       this->str = other.str;
     }
   }
-  LoxValue& operator=(const LoxValue& other) {
+  LoxValue &operator=(const LoxValue &other) {
     this->type = other.type;
     if (other.type == ValueType::NUM_T) {
       this->num = other.num;

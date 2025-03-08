@@ -1,10 +1,10 @@
+#include "astprinter.h"
 #include "common.h"
 #include "error.h"
-#include "scanner.h"
-#include "parser.h"
 #include "expr.h"
-#include "astprinter.h"
 #include "interpreter.h"
+#include "parser.h"
+#include "scanner.h"
 
 bool hadRuntimeError = false;
 
@@ -13,7 +13,7 @@ void run(string &str) {
   scanner.ScanTokens();
 
   Parser parser(scanner.GetTokens());
-  vector<Stmt*> statements = parser.Parse();
+  vector<Stmt *> statements = parser.Parse();
 
   Interpreter interpreter(statements);
   interpreter.Execute();

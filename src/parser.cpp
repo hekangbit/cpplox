@@ -59,9 +59,7 @@ ParserException Parser::Error(Token *token, string message) {
   return ParserException();
 }
 
-void Parser::Synchronize() {
-
-}
+void Parser::Synchronize() {}
 
 Expr *Parser::Equality() {
   Expr *expr = Comparison();
@@ -174,8 +172,8 @@ Stmt *Parser::Declaration() {
   }
 }
 
-vector<Stmt*> Parser::Parse() {
-  vector<Stmt*> statements;
+vector<Stmt *> Parser::Parse() {
+  vector<Stmt *> statements;
   while (!IsAtEnd()) {
     statements.push_back(Declaration());
   }

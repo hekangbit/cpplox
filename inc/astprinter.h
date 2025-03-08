@@ -1,8 +1,8 @@
-#include <vector>
 #include "common.h"
-#include "visitor.h"
 #include "expr.h"
 #include "stmt.h"
+#include "visitor.h"
+#include <vector>
 
 class AstPrinter : public Visitor {
 public:
@@ -21,5 +21,6 @@ public:
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(VarStmt &stmt);
+
 private:
 };

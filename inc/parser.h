@@ -1,13 +1,13 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <exception>
-#include <vector>
 #include "common.h"
 #include "error.h"
-#include "token.h"
 #include "expr.h"
 #include "stmt.h"
+#include "token.h"
+#include <exception>
+#include <vector>
 
 class ParserException : public exception {
 public:
@@ -37,7 +37,7 @@ public:
   Expr *Expression();
   Stmt *VarDeclaration();
   Stmt *Declaration();
-  vector<Stmt*> Parse();
+  vector<Stmt *> Parse();
 
 private:
   vector<Token> tokens;

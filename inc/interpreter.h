@@ -1,21 +1,20 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
-#include <exception>
-#include <vector>
-#include <unordered_map>
 #include "common.h"
 #include "error.h"
-#include "visitor.h"
-#include "value.h"
-#include "stmt.h"
 #include "expr.h"
-
-
+#include "stmt.h"
+#include "value.h"
+#include "visitor.h"
+#include <exception>
+#include <unordered_map>
+#include <vector>
 
 class RuntimeException : public exception {
 public:
-  RuntimeException(Token token, string message) : token(token), message(message) {}
+  RuntimeException(Token token, string message)
+      : token(token), message(message) {}
   const char *what() const throw() { return message.c_str(); }
   Token token;
   string message;
@@ -32,7 +31,7 @@ private:
 
 class Interpreter : public Visitor {
 public:
-  Interpreter(vector<Stmt*> statements) : statements(statements) {}
+  Interpreter(vector<Stmt *> statements) : statements(statements) {}
   ~Interpreter() {}
 
   virtual LoxValue Visit(NumberLiteralExpr &expr);
@@ -51,7 +50,7 @@ public:
   void Execute();
 
 private:
-  vector<Stmt*> statements;
+  vector<Stmt *> statements;
   Enviroment global_env;
 };
 
