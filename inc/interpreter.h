@@ -23,7 +23,7 @@ public:
 class Enviroment {
 public:
   void Define(string name, const LoxValue value);
-  LoxValue Get(string name);
+  LoxValue Get(Token &token);
 
 private:
   unordered_map<string, LoxValue> values;

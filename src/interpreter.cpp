@@ -4,11 +4,14 @@ void Enviroment::Define(string name, const LoxValue value) {
   values[name] = value;
 }
 
-LoxValue Enviroment::Get(string name) {
-  if (values.count(name)) {
-    return values[name];
+LoxValue Enviroment::Get(Token &token) {
+  if (values.count(token.lexeme)) {
+    return values[token.lexeme];
   }
-  return LoxValue();
+  string msg = "underfined variable ";
+  msg += token.lexeme;
+  msg += ".";
+  throw RuntimeException(token, msg);
 }
 
 LoxValue Interpreter::Visit(NumberLiteralExpr &expr) {
@@ -62,7 +65,7 @@ LoxValue Interpreter::Visit(BoolLiteralExpr &expr) {
 }
 
 LoxValue Interpreter::Visit(VariableExpr &expr) {
-  return global_env.Get(expr.var.lexeme);
+  return global_env.Get(expr.var);
 }
 
 void Interpreter::Visit(ExprStmt &stmt) {
