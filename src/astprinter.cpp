@@ -65,6 +65,10 @@ LoxValue AstPrinter::Visit(GroupingExpr &expr) {
 
 LoxValue AstPrinter::Visit(VariableExpr &expr) { return expr.var.lexeme; }
 
+LoxValue AstPrinter::Visit(AssignExpr &expr) {
+  return LoxValue();
+}
+
 void AstPrinter::Visit(ExprStmt &stmt) {}
 
 void AstPrinter::Visit(PrintStmt &stmt) {}

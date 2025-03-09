@@ -71,4 +71,12 @@ public:
   Token var;
 };
 
+class AssignExpr : public Expr {
+public:
+AssignExpr(Token name, Expr *value) : name(name), value(value) {}
+  LoxValue Accept(Visitor &visitor) { return visitor.Visit(*this); }
+  Expr *value;
+  Token name;
+};
+
 #endif

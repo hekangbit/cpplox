@@ -61,6 +61,21 @@ ParserException Parser::Error(Token *token, string message) {
 
 void Parser::Synchronize() {}
 
+Expr *Parser::Assignment() {
+  Expr *expr = Equality();
+
+  if (Match({EQUAL})) {
+    Token *equal_token = Previous();
+    Expr *value = Assignment();
+    VariableExpr* var = dynamic_cast<VariableExpr*>(expr);
+    if (var != nullptr) {
+      return new AssignExpr(var->var, value);
+    }
+    Error(equal_token, "Invalid assignment target");
+  }
+  return expr;
+}
+
 Expr *Parser::Equality() {
   Expr *expr = Comparison();
   while (Match({EQUAL_EQUAL, BANG_EQUAL})) {
@@ -138,7 +153,7 @@ Expr *Parser::Primary() {
   return nullptr;
 }
 
-Expr *Parser::Expression() { return Equality(); }
+Expr *Parser::Expression() { return Assignment(); }
 
 Stmt *Parser::VarDeclaration() {
   Token *token = Consume(IDENTIFIER, "Expect a variable name");

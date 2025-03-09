@@ -22,8 +22,9 @@ public:
 
 class Enviroment {
 public:
-  void Define(string name, const LoxValue value);
-  LoxValue Get(Token &token);
+  void Define(Token &name, const LoxValue value);
+  void Assign(Token &name, const LoxValue value);
+  LoxValue Get(Token &name);
 
 private:
   unordered_map<string, LoxValue> values;
@@ -42,11 +43,12 @@ public:
   virtual LoxValue Visit(NullLiteralExpr &expr);
   virtual LoxValue Visit(BoolLiteralExpr &expr);
   virtual LoxValue Visit(VariableExpr &expr);
+  virtual LoxValue Visit(AssignExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(VarStmt &stmt);
 
-  LoxValue Evaluate(Expr &expr);
+  LoxValue Evaluate(Expr *expr);
   void Execute();
 
 private:

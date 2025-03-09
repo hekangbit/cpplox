@@ -1,17 +1,23 @@
 #include "interpreter.h"
 
-void Enviroment::Define(string name, const LoxValue value) {
-  values[name] = value;
+void Enviroment::Define(Token &name, const LoxValue value) {
+  values[name.lexeme] = value;
 }
 
-LoxValue Enviroment::Get(Token &token) {
-  if (values.count(token.lexeme)) {
-    return values[token.lexeme];
+void Enviroment::Assign(Token &name, const LoxValue value) {
+  if (values.count(name.lexeme)) {
+    values[name.lexeme] = value;
+    return;
   }
-  string msg = "underfined variable ";
-  msg += token.lexeme;
-  msg += ".";
-  throw RuntimeException(token, msg);
+  throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
+}
+
+
+LoxValue Enviroment::Get(Token &name) {
+  if (values.count(name.lexeme)) {
+    return values[name.lexeme];
+  }
+  throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
 }
 
 LoxValue Interpreter::Visit(NumberLiteralExpr &expr) {
@@ -23,7 +29,7 @@ LoxValue Interpreter::Visit(StringLiteralExpr &expr) {
 }
 
 LoxValue Interpreter::Visit(UnaryExpr &expr) {
-  LoxValue value = Evaluate(*(expr.right));
+  LoxValue value = Evaluate(expr.right);
   switch (expr.op.type) {
   case MINUS:
     return LoxValue(-(value.GetNum()));
@@ -32,8 +38,8 @@ LoxValue Interpreter::Visit(UnaryExpr &expr) {
 }
 
 LoxValue Interpreter::Visit(BinaryExpr &expr) {
-  LoxValue leftValue = Evaluate(*(expr.left));
-  LoxValue rightValue = Evaluate(*(expr.right));
+  LoxValue leftValue = Evaluate(expr.left);
+  LoxValue rightValue = Evaluate(expr.right);
   if (leftValue.IsNum() && rightValue.IsNum()) {
     switch (expr.op.type) {
     case STAR:
@@ -52,7 +58,7 @@ LoxValue Interpreter::Visit(BinaryExpr &expr) {
 }
 
 LoxValue Interpreter::Visit(GroupingExpr &expr) {
-  return Evaluate(*(expr.expr));
+  return Evaluate(expr.expr);
 }
 
 LoxValue Interpreter::Visit(NullLiteralExpr &expr) { return LoxValue(); }
@@ -68,12 +74,18 @@ LoxValue Interpreter::Visit(VariableExpr &expr) {
   return global_env.Get(expr.var);
 }
 
+LoxValue Interpreter::Visit(AssignExpr &expr) {
+  LoxValue value = Evaluate(expr.value);
+  global_env.Assign(expr.name, value);
+  return value;
+}
+
 void Interpreter::Visit(ExprStmt &stmt) {
-  LoxValue value = Evaluate(*(stmt.expr));
+  LoxValue value = Evaluate(stmt.expr);
 }
 
 void Interpreter::Visit(PrintStmt &stmt) {
-  LoxValue value = Evaluate(*(stmt.expr));
+  LoxValue value = Evaluate(stmt.expr);
   if (value.IsNil()) {
     cout << "nil" << endl;
   } else if (value.IsNum()) {
@@ -84,10 +96,14 @@ void Interpreter::Visit(PrintStmt &stmt) {
 }
 
 void Interpreter::Visit(VarStmt &stmt) {
-  global_env.Define(stmt.token->lexeme, Evaluate(*(stmt.expr)));
+  LoxValue value;
+  if (stmt.initializer != nullptr) {
+    value = Evaluate(stmt.initializer);
+  }
+  global_env.Define(*(stmt.token), value);
 }
 
-LoxValue Interpreter::Evaluate(Expr &expr) { return expr.Accept(*this); }
+LoxValue Interpreter::Evaluate(Expr *expr) { return expr->Accept(*this); }
 
 void Interpreter::Execute() {
   try {

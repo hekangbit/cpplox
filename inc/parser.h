@@ -28,6 +28,7 @@ public:
   ParserException Error(Token *token, string message);
   void Synchronize();
 
+  Expr *Assignment();
   Expr *Equality();
   Expr *Comparison();
   Expr *Term();

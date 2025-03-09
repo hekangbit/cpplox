@@ -29,10 +29,10 @@ public:
 
 class VarStmt : public Stmt {
 public:
-  VarStmt(Token *token, Expr *expr) : token(token), expr(expr) {}
+  VarStmt(Token *token, Expr *initializer) : token(token), initializer(initializer) {}
   virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
   Token *token;
-  Expr *expr;
+  Expr *initializer;
 };
 
 #endif

@@ -7,7 +7,7 @@ enum class ValueType { NIL_T, NUM_T, STR_T };
 
 class LoxValue {
 public:
-  LoxValue() : type(ValueType::NIL_T) {}
+  LoxValue() : type(ValueType::NIL_T), str("nil") {}
   LoxValue(double num) : type(ValueType::NUM_T), num(num) {}
   LoxValue(string str) : type(ValueType::STR_T), str(str) {}
   LoxValue(const LoxValue &other) {
