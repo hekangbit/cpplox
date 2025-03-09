@@ -155,6 +155,29 @@ Expr *Parser::Primary() {
 
 Expr *Parser::Expression() { return Assignment(); }
 
+list<Stmt*> Parser::Block() {
+  list<Stmt*> result;
+  while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
+    result.push_back(Declaration());
+  }
+  Consume(RIGHT_BRACE, "Expect '}' in block statement");
+  return result;
+}
+
+Stmt *Parser::Statement() {
+  Stmt *result;
+  if (Match({PRINT})) {
+    result = new PrintStmt(Peek(), Expression());
+    Consume(SEMICOLON, "Expect ';' in print statement");
+  } else if (Match({LEFT_BRACE})) {
+    result = new BlockStmt(Block());
+  } else {
+    result = new ExprStmt(Expression());
+    Consume(SEMICOLON, "Expect ';' in expr statement");
+  }
+  return result;
+}
+
 Stmt *Parser::VarDeclaration() {
   Token *token = Consume(IDENTIFIER, "Expect a variable name");
   Expr *initializer = nullptr;
@@ -170,15 +193,10 @@ Stmt *Parser::Declaration() {
   try {
     if (Match({VAR})) {
       result = VarDeclaration();
-    } else if (Match({PRINT})) {
-      result = new PrintStmt(Peek(), Expression());
-      Consume(SEMICOLON, "Expect ';' in print statement");
     } else {
-      result = new ExprStmt(Expression());
-      Consume(SEMICOLON, "Expect ';' in expr statement");
+      result = Statement();
     }
     return result;
-
   } catch (const ParserException &e) {
     cout << "Catch Parser exception" << endl;
     cerr << e.what() << endl;

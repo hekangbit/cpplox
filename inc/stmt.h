@@ -5,6 +5,7 @@
 #include "expr.h"
 #include "token.h"
 #include "visitor.h"
+#include <list>
 
 class Stmt {
 public:
@@ -33,6 +34,13 @@ public:
   virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
   Token *token;
   Expr *initializer;
+};
+
+class BlockStmt : public Stmt {
+public:
+  BlockStmt(list<Stmt*> statements) : statements(statements) {}
+  virtual void Accept(Visitor &visitor) { visitor.Visit(*this); };
+  list<Stmt*> statements;
 };
 
 #endif

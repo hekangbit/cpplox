@@ -22,12 +22,15 @@ public:
 
 class Enviroment {
 public:
+  Enviroment() : enclosing(nullptr) {}
+  Enviroment(Enviroment *enclosing) : enclosing(enclosing) {}
   void Define(Token &name, const LoxValue value);
   void Assign(Token &name, const LoxValue value);
   LoxValue Get(Token &name);
 
 private:
   unordered_map<string, LoxValue> values;
+  Enviroment *enclosing;
 };
 
 class Interpreter : public Visitor {
@@ -46,14 +49,17 @@ public:
   virtual LoxValue Visit(AssignExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
+  virtual void Visit(BlockStmt &stmt);
   virtual void Visit(VarStmt &stmt);
 
   LoxValue Evaluate(Expr *expr);
+  void ExecuteBlock(list<Stmt*> statements, Enviroment *env);
   void Execute();
 
 private:
   vector<Stmt *> statements;
   Enviroment global_env;
+  Enviroment *cur_env;
 };
 
 #endif

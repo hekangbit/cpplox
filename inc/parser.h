@@ -8,6 +8,7 @@
 #include "token.h"
 #include <exception>
 #include <vector>
+#include <list>
 
 class ParserException : public exception {
 public:
@@ -36,6 +37,8 @@ public:
   Expr *Unary();
   Expr *Primary();
   Expr *Expression();
+  list<Stmt*> Block();
+  Stmt *Statement();
   Stmt *VarDeclaration();
   Stmt *Declaration();
   vector<Stmt *> Parse();

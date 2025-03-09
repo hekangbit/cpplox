@@ -21,6 +21,7 @@ public:
   virtual LoxValue Visit(AssignExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
+  virtual void Visit(BlockStmt &stmt);
   virtual void Visit(VarStmt &stmt);
 
 private:

@@ -9,13 +9,18 @@ void Enviroment::Assign(Token &name, const LoxValue value) {
     values[name.lexeme] = value;
     return;
   }
+  if (enclosing != nullptr) {
+    enclosing->Assign(name, value);
+  }
   throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
 }
-
 
 LoxValue Enviroment::Get(Token &name) {
   if (values.count(name.lexeme)) {
     return values[name.lexeme];
+  }
+  if (enclosing != nullptr) {
+    return enclosing->Get(name);
   }
   throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
 }
@@ -71,12 +76,12 @@ LoxValue Interpreter::Visit(BoolLiteralExpr &expr) {
 }
 
 LoxValue Interpreter::Visit(VariableExpr &expr) {
-  return global_env.Get(expr.var);
+  return cur_env->Get(expr.var);
 }
 
 LoxValue Interpreter::Visit(AssignExpr &expr) {
   LoxValue value = Evaluate(expr.value);
-  global_env.Assign(expr.name, value);
+  cur_env->Assign(expr.name, value);
   return value;
 }
 
@@ -95,17 +100,38 @@ void Interpreter::Visit(PrintStmt &stmt) {
   }
 }
 
+void Interpreter::Visit(BlockStmt &stmt) {
+  ExecuteBlock(stmt.statements, cur_env);
+}
+
 void Interpreter::Visit(VarStmt &stmt) {
   LoxValue value;
   if (stmt.initializer != nullptr) {
     value = Evaluate(stmt.initializer);
   }
-  global_env.Define(*(stmt.token), value);
+  cur_env->Define(*(stmt.token), value);
 }
 
 LoxValue Interpreter::Evaluate(Expr *expr) { return expr->Accept(*this); }
 
+void Interpreter::ExecuteBlock(list<Stmt*> statements, Enviroment *env) {
+  Enviroment *prev_env = env;
+  cur_env = new Enviroment(env);
+  try {
+    for (auto &it : statements) {
+      it->Accept(*this);
+    }
+  } catch (const RuntimeException &e) {
+    cout << "Catch Runtime exception in block" << endl;
+    error(e.token.line, e.message);
+    cerr << e.what() << endl;
+  }
+  delete cur_env;
+  cur_env = prev_env;
+}
+
 void Interpreter::Execute() {
+  cur_env = &global_env;
   try {
     for (auto &statement : statements) {
       statement->Accept(*this);

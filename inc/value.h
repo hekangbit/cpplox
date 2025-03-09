@@ -37,10 +37,8 @@ public:
 
 private:
   ValueType type;
-  union {
-    double num;
-    string str;
-  };
+  double num;
+  string str;
 };
 
 #endif

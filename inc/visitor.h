@@ -14,6 +14,7 @@ class VariableExpr;
 class AssignExpr;
 class ExprStmt;
 class PrintStmt;
+class BlockStmt;
 class VarStmt;
 
 class Visitor {
@@ -30,6 +31,7 @@ public:
   virtual LoxValue Visit(AssignExpr &expr) = 0;
   virtual void Visit(ExprStmt &stmt) = 0;
   virtual void Visit(PrintStmt &stmt) = 0;
+  virtual void Visit(BlockStmt &stmt) = 0;
   virtual void Visit(VarStmt &stmt) = 0;
 };
 
