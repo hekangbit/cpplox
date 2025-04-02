@@ -59,7 +59,29 @@ ParserException Parser::Error(Token *token, string message) {
   return ParserException();
 }
 
-void Parser::Synchronize() {}
+void Parser::Synchronize() {
+  Advance();
+  while (!IsAtEnd()) {
+    Token *curr_token = Peek();
+    if (curr_token->type == SEMICOLON) {
+      return;
+    }
+    switch (curr_token->type) {
+      case VAR:
+      case IF:
+      case FOR:
+      case WHILE:
+      case FUN:
+      case CLASS:
+      case RETURN:
+      case PRINT:
+        return;
+      default:
+        break;
+    }
+    Advance();
+  }
+}
 
 Expr *Parser::Assignment() {
   Expr *expr = Equality();
@@ -208,7 +230,10 @@ Stmt *Parser::Declaration() {
 vector<Stmt *> Parser::Parse() {
   vector<Stmt *> statements;
   while (!IsAtEnd()) {
-    statements.push_back(Declaration());
+    Stmt *stmt = Declaration();
+    if (stmt) {
+      statements.push_back(stmt);
+    }
   }
   return statements;
 }
