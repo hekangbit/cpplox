@@ -118,8 +118,8 @@ void Interpreter::ExecuteBlock(list<Stmt*> statements, Enviroment *env) {
   Enviroment *prev_env = env;
   cur_env = new Enviroment(env);
   try {
-    for (auto &it : statements) {
-      it->Accept(*this);
+    for (auto &statement : statements) {
+      statement->Accept(*this);
     }
   } catch (const RuntimeException &e) {
     cout << "Catch Runtime exception in block" << endl;

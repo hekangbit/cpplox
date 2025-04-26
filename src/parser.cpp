@@ -180,7 +180,10 @@ Expr *Parser::Expression() { return Assignment(); }
 list<Stmt*> Parser::Block() {
   list<Stmt*> result;
   while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
-    result.push_back(Declaration());
+    Stmt *stmt = Declaration();
+    if (stmt) {
+      result.push_back(stmt);
+    }
   }
   Consume(RIGHT_BRACE, "Expect '}' in block statement");
   return result;
