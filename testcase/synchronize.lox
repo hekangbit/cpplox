@@ -1,0 +1,5 @@
+var a=0;
+var c=1;
+a+;
+print c;
+print c=123;

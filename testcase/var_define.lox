@@ -1,0 +1,14 @@
+var a = 12;
+print a;
+
+var b = "hello";
+print b;
+
+var c;
+print c;
+
+var e = 3.4;
+print a+e;
+
+a= 911;
+print a;
