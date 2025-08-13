@@ -24,12 +24,12 @@ class Enviroment {
 public:
   Enviroment() : enclosing(nullptr) {}
   Enviroment(Enviroment *enclosing) : enclosing(enclosing) {}
-  void Define(Token &name, const LoxValue value);
-  void Assign(Token &name, const LoxValue value);
-  LoxValue Get(Token &name);
+  void Define(Token &name, const Value value);
+  void Assign(Token &name, const Value value);
+  Value Get(Token &name);
 
 private:
-  unordered_map<string, LoxValue> values;
+  unordered_map<string, Value> values;
   Enviroment *enclosing;
 };
 
@@ -38,21 +38,22 @@ public:
   Interpreter(vector<Stmt *> statements) : statements(statements) {}
   ~Interpreter() {}
 
-  virtual LoxValue Visit(NumberLiteralExpr &expr);
-  virtual LoxValue Visit(StringLiteralExpr &expr);
-  virtual LoxValue Visit(UnaryExpr &expr);
-  virtual LoxValue Visit(BinaryExpr &expr);
-  virtual LoxValue Visit(GroupingExpr &expr);
-  virtual LoxValue Visit(NullLiteralExpr &expr);
-  virtual LoxValue Visit(BoolLiteralExpr &expr);
-  virtual LoxValue Visit(VariableExpr &expr);
-  virtual LoxValue Visit(AssignExpr &expr);
+  bool IsTruthy(Value &value);
+  virtual Value Visit(NumberLiteralExpr &expr);
+  virtual Value Visit(StringLiteralExpr &expr);
+  virtual Value Visit(UnaryExpr &expr);
+  virtual Value Visit(BinaryExpr &expr);
+  virtual Value Visit(GroupingExpr &expr);
+  virtual Value Visit(NullLiteralExpr &expr);
+  virtual Value Visit(BoolLiteralExpr &expr);
+  virtual Value Visit(VariableExpr &expr);
+  virtual Value Visit(AssignExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);
   virtual void Visit(VarStmt &stmt);
 
-  LoxValue Evaluate(Expr *expr);
+  Value Evaluate(Expr *expr);
   void ExecuteBlock(list<Stmt*> statements, Enviroment *env);
   void Execute();
 

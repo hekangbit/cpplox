@@ -42,6 +42,7 @@ typedef enum {
   FOR,
   WHILE,
   NIL,
+  END_LOX,
   TYPE_NUM
 } TokenType;
 

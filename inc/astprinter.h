@@ -10,15 +10,15 @@ public:
   ~AstPrinter() {}
   void Walk(Expr &expr);
   string Parenthesize(string &name, vector<Expr *> &exprs);
-  virtual LoxValue Visit(NumberLiteralExpr &expr);
-  virtual LoxValue Visit(StringLiteralExpr &expr);
-  virtual LoxValue Visit(UnaryExpr &expr);
-  virtual LoxValue Visit(BinaryExpr &expr);
-  virtual LoxValue Visit(GroupingExpr &expr);
-  virtual LoxValue Visit(NullLiteralExpr &expr);
-  virtual LoxValue Visit(BoolLiteralExpr &expr);
-  virtual LoxValue Visit(VariableExpr &expr);
-  virtual LoxValue Visit(AssignExpr &expr);
+  virtual Value Visit(NumberLiteralExpr &expr);
+  virtual Value Visit(StringLiteralExpr &expr);
+  virtual Value Visit(UnaryExpr &expr);
+  virtual Value Visit(BinaryExpr &expr);
+  virtual Value Visit(GroupingExpr &expr);
+  virtual Value Visit(NullLiteralExpr &expr);
+  virtual Value Visit(BoolLiteralExpr &expr);
+  virtual Value Visit(VariableExpr &expr);
+  virtual Value Visit(AssignExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);

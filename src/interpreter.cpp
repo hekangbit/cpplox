@@ -1,10 +1,10 @@
 #include "interpreter.h"
 
-void Enviroment::Define(Token &name, const LoxValue value) {
+void Enviroment::Define(Token &name, const Value value) {
   values[name.lexeme] = value;
 }
 
-void Enviroment::Assign(Token &name, const LoxValue value) {
+void Enviroment::Assign(Token &name, const Value value) {
   if (values.count(name.lexeme)) {
     values[name.lexeme] = value;
     return;
@@ -15,7 +15,7 @@ void Enviroment::Assign(Token &name, const LoxValue value) {
   throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
 }
 
-LoxValue Enviroment::Get(Token &name) {
+Value Enviroment::Get(Token &name) {
   if (values.count(name.lexeme)) {
     return values[name.lexeme];
   }
@@ -25,79 +25,94 @@ LoxValue Enviroment::Get(Token &name) {
   throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
 }
 
-LoxValue Interpreter::Visit(NumberLiteralExpr &expr) {
-  return LoxValue(expr.num);
-}
-
-LoxValue Interpreter::Visit(StringLiteralExpr &expr) {
-  return LoxValue(expr.str);
-}
-
-LoxValue Interpreter::Visit(UnaryExpr &expr) {
-  LoxValue value = Evaluate(expr.right);
-  switch (expr.op.type) {
-  case MINUS:
-    return LoxValue(-(value.GetNum()));
+bool Interpreter::IsTruthy(Value &value) {
+  if (value.isNil()) {
+    return false;
   }
-  return LoxValue();
+  if (value.isBool()) {
+    return value.getBool();
+  }
+  return true;
 }
 
-LoxValue Interpreter::Visit(BinaryExpr &expr) {
-  LoxValue leftValue = Evaluate(expr.left);
-  LoxValue rightValue = Evaluate(expr.right);
-  if (leftValue.IsNum() && rightValue.IsNum()) {
-    switch (expr.op.type) {
-    case STAR:
-      return LoxValue(leftValue.GetNum() * rightValue.GetNum());
-    case SLASH:
-      return LoxValue(leftValue.GetNum() / rightValue.GetNum());
-    case PLUS:
-      return LoxValue(leftValue.GetNum() + rightValue.GetNum());
-    case MINUS:
-      return LoxValue(leftValue.GetNum() - rightValue.GetNum());
-    default:
-      break;
+Value Interpreter::Visit(NumberLiteralExpr &expr) {
+  return Value(expr.num);
+}
+
+Value Interpreter::Visit(StringLiteralExpr &expr) {
+  return Value(expr.str);
+}
+
+Value Interpreter::Visit(UnaryExpr &expr) {
+  Value value = Evaluate(expr.right);
+  if (expr.op.type == BANG) {
+    if (value.isBool()) {
+      return !value.getBool();
+    }
+  } else if (expr.op.type == MINUS) {
+    if (value.isDouble()) {
+      return -(value.getDouble());
     }
   }
-  throw RuntimeException(expr.op, "binary expr has unmatch value type");
+  return Value();
 }
 
-LoxValue Interpreter::Visit(GroupingExpr &expr) {
+Value Interpreter::Visit(BinaryExpr &expr) {
+  Value leftValue = Evaluate(expr.left);
+  Value rightValue = Evaluate(expr.right);
+  Value result;
+
+  switch (expr.op.type) {
+  case STAR:
+    result = leftValue * rightValue;
+    break;
+  case SLASH:
+    result = leftValue / rightValue;
+    break;
+  case PLUS:
+    result = leftValue + rightValue;
+    break;
+  case MINUS:
+    result = leftValue - rightValue;
+    break;
+  default:
+    break;
+  }
+
+  if (result.isNil()) {
+    throw RuntimeException(expr.op, "binary expr has unmatch value type");
+  }
+
+  return result;
+}
+
+Value Interpreter::Visit(GroupingExpr &expr) {
   return Evaluate(expr.expr);
 }
 
-LoxValue Interpreter::Visit(NullLiteralExpr &expr) { return LoxValue(); }
+Value Interpreter::Visit(NullLiteralExpr &expr) { return Value(); }
 
-LoxValue Interpreter::Visit(BoolLiteralExpr &expr) {
-  if (expr.val) {
-    return LoxValue(string("true"));
-  }
-  return LoxValue(string("false"));
+Value Interpreter::Visit(BoolLiteralExpr &expr) {
+  return Value(expr.val);
 }
 
-LoxValue Interpreter::Visit(VariableExpr &expr) {
+Value Interpreter::Visit(VariableExpr &expr) {
   return cur_env->Get(expr.var);
 }
 
-LoxValue Interpreter::Visit(AssignExpr &expr) {
-  LoxValue value = Evaluate(expr.value);
+Value Interpreter::Visit(AssignExpr &expr) {
+  Value value = Evaluate(expr.value);
   cur_env->Assign(expr.name, value);
   return value;
 }
 
 void Interpreter::Visit(ExprStmt &stmt) {
-  LoxValue value = Evaluate(stmt.expr);
+  Value value = Evaluate(stmt.expr);
 }
 
 void Interpreter::Visit(PrintStmt &stmt) {
-  LoxValue value = Evaluate(stmt.expr);
-  if (value.IsNil()) {
-    cout << "nil" << endl;
-  } else if (value.IsNum()) {
-    cout << value.GetNum() << endl;
-  } else {
-    cout << value.GetStr() << endl;
-  }
+  Value value = Evaluate(stmt.expr);
+  cout << value << endl;
 }
 
 void Interpreter::Visit(BlockStmt &stmt) {
@@ -105,14 +120,14 @@ void Interpreter::Visit(BlockStmt &stmt) {
 }
 
 void Interpreter::Visit(VarStmt &stmt) {
-  LoxValue value;
+  Value value;
   if (stmt.initializer != nullptr) {
     value = Evaluate(stmt.initializer);
   }
   cur_env->Define(*(stmt.token), value);
 }
 
-LoxValue Interpreter::Evaluate(Expr *expr) { return expr->Accept(*this); }
+Value Interpreter::Evaluate(Expr *expr) { return expr->Accept(*this); }
 
 void Interpreter::ExecuteBlock(list<Stmt*> statements, Enviroment *env) {
   Enviroment *prev_env = env;

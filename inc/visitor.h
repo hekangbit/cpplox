@@ -20,15 +20,15 @@ class VarStmt;
 class Visitor {
 public:
   virtual ~Visitor() {}
-  virtual LoxValue Visit(NumberLiteralExpr &expr) = 0;
-  virtual LoxValue Visit(StringLiteralExpr &expr) = 0;
-  virtual LoxValue Visit(UnaryExpr &expr) = 0;
-  virtual LoxValue Visit(BinaryExpr &expr) = 0;
-  virtual LoxValue Visit(GroupingExpr &expr) = 0;
-  virtual LoxValue Visit(NullLiteralExpr &expr) = 0;
-  virtual LoxValue Visit(BoolLiteralExpr &expr) = 0;
-  virtual LoxValue Visit(VariableExpr &expr) = 0;
-  virtual LoxValue Visit(AssignExpr &expr) = 0;
+  virtual Value Visit(NumberLiteralExpr &expr) = 0;
+  virtual Value Visit(StringLiteralExpr &expr) = 0;
+  virtual Value Visit(UnaryExpr &expr) = 0;
+  virtual Value Visit(BinaryExpr &expr) = 0;
+  virtual Value Visit(GroupingExpr &expr) = 0;
+  virtual Value Visit(NullLiteralExpr &expr) = 0;
+  virtual Value Visit(BoolLiteralExpr &expr) = 0;
+  virtual Value Visit(VariableExpr &expr) = 0;
+  virtual Value Visit(AssignExpr &expr) = 0;
   virtual void Visit(ExprStmt &stmt) = 0;
   virtual void Visit(PrintStmt &stmt) = 0;
   virtual void Visit(BlockStmt &stmt) = 0;

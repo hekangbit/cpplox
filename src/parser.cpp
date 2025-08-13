@@ -53,7 +53,7 @@ ParserException Parser::Error(Token *token, string message) {
     message = "at the end, " + message;
     error(tokens.size() ? tokens.back().line : 0, message);
   } else {
-    message = "found token " + token->lexeme + ", " + message;
+    message = "found token <" + token->lexeme + ">, " + message;
     error(token->line, message);
   }
   return ParserException();
@@ -185,7 +185,6 @@ list<Stmt*> Parser::Block() {
       result.push_back(stmt);
     }
   }
-  Consume(RIGHT_BRACE, "Expect '}' in block statement");
   return result;
 }
 
@@ -196,6 +195,7 @@ Stmt *Parser::Statement() {
     Consume(SEMICOLON, "Expect ';' in print statement");
   } else if (Match({LEFT_BRACE})) {
     result = new BlockStmt(Block());
+    Consume(RIGHT_BRACE, "Expect '}' in block statement");
   } else {
     result = new ExprStmt(Expression());
     Consume(SEMICOLON, "Expect ';' in expr statement");

@@ -1,8 +1,8 @@
 #include "astprinter.h"
 
 void AstPrinter::Walk(Expr &expr) {
-  LoxValue res = expr.Accept(*this);
-  cout << res.GetStr() << endl;
+  Value res = expr.Accept(*this);
+  cout << res << endl;
 }
 
 string AstPrinter::Parenthesize(string &name, vector<Expr *> &exprs) {
@@ -12,61 +12,61 @@ string AstPrinter::Parenthesize(string &name, vector<Expr *> &exprs) {
   for (auto expr : exprs) {
     // cout << " ";
     // res += expr->Accept(*this);
-    LoxValue tmp = expr->Accept(*this);
-    res += tmp.GetStr();
+    Value tmp = expr->Accept(*this);
+    res += tmp.toString();
   }
   // cout << ")";
   res += ")";
   return res;
 }
 
-LoxValue AstPrinter::Visit(NumberLiteralExpr &expr) {
+Value AstPrinter::Visit(NumberLiteralExpr &expr) {
   // cout << expr.num;
   return to_string(expr.num);
 }
 
-LoxValue AstPrinter::Visit(StringLiteralExpr &expr) {
+Value AstPrinter::Visit(StringLiteralExpr &expr) {
   // cout << expr.str;
   return expr.str;
 }
 
-LoxValue AstPrinter::Visit(NullLiteralExpr &expr) {
+Value AstPrinter::Visit(NullLiteralExpr &expr) {
   // cout << "null";
   string res("nil");
   return res;
 }
 
-LoxValue AstPrinter::Visit(BoolLiteralExpr &expr) {
+Value AstPrinter::Visit(BoolLiteralExpr &expr) {
   string res = expr.val ? "true" : "false";
   // cout << res;
   return res;
 }
 
-LoxValue AstPrinter::Visit(UnaryExpr &expr) {
+Value AstPrinter::Visit(UnaryExpr &expr) {
   vector<Expr *> exprs{expr.right};
   return Parenthesize(expr.op.lexeme, exprs);
 }
 
-LoxValue AstPrinter::Visit(BinaryExpr &expr) {
+Value AstPrinter::Visit(BinaryExpr &expr) {
   vector<Expr *> exprs{expr.left, expr.right};
   return Parenthesize(expr.op.lexeme, exprs);
 }
 
-LoxValue AstPrinter::Visit(GroupingExpr &expr) {
+Value AstPrinter::Visit(GroupingExpr &expr) {
   string res;
   res += "(";
   // cout << "(";
-  LoxValue tmp = expr.expr->Accept(*this);
-  res += tmp.GetStr();
+  Value tmp = expr.expr->Accept(*this);
+  res += tmp.toString();
   // cout << ")";
   res += ")";
   return res;
 }
 
-LoxValue AstPrinter::Visit(VariableExpr &expr) { return expr.var.lexeme; }
+Value AstPrinter::Visit(VariableExpr &expr) { return expr.var.lexeme; }
 
-LoxValue AstPrinter::Visit(AssignExpr &expr) {
-  return LoxValue();
+Value AstPrinter::Visit(AssignExpr &expr) {
+  return Value();
 }
 
 void AstPrinter::Visit(ExprStmt &stmt) {}
