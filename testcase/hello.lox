@@ -19,6 +19,9 @@ print d==e;
 print f==h;
 print f==i;
 print f!=i;
+print 2 * "s";
+print 2 * (3 / -"muffin");
+print "end"
 
 //print "Hello, world!";
 //fun add(a, b) {

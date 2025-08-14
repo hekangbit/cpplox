@@ -39,6 +39,9 @@ public:
   ~Interpreter() {}
 
   bool IsTruthy(Value &value);
+  void CheckNumOperand(const Token &op, const Value &value);
+  void CheckNumOperands(const Token &op, const Value &left, const Value &right);
+
   virtual Value Visit(NumberLiteralExpr &expr);
   virtual Value Visit(StringLiteralExpr &expr);
   virtual Value Visit(UnaryExpr &expr);

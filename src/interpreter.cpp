@@ -35,6 +35,26 @@ bool Interpreter::IsTruthy(Value &value) {
   return true;
 }
 
+void Interpreter::CheckNumOperand(const Token &op, const Value &value) {
+  if (value.isDouble()) {
+    return;
+  }
+  string tmp = op.lexeme;
+  tmp.insert(0, "For operator <");
+  tmp.append(">, Operand must be a number.");
+  throw RuntimeException(op, tmp);
+}
+
+void Interpreter::CheckNumOperands(const Token &op, const Value &left, const Value &right) {
+  if (left.isDouble() && right.isDouble()) {
+    return;
+  }
+  string tmp = op.lexeme;
+  tmp.insert(0, "For operator <");
+  tmp.append(">, Operands must be a numbers.");
+  throw RuntimeException(op, tmp);
+}
+
 Value Interpreter::Visit(NumberLiteralExpr &expr) {
   return Value(expr.num);
 }
@@ -48,9 +68,8 @@ Value Interpreter::Visit(UnaryExpr &expr) {
   if (expr.op.type == BANG) {
     return !IsTruthy(value);
   } else if (expr.op.type == MINUS) {
-    if (value.isDouble()) {
-      return -(value.getDouble());
-    }
+    CheckNumOperand(expr.op, value);
+    return -(value.getDouble());
   }
   return Value();
 }
@@ -96,7 +115,10 @@ Value Interpreter::Visit(BinaryExpr &expr) {
   }
 
   if (result.isNil()) {
-    throw RuntimeException(expr.op, "binary expr has unmatch value type");
+    string tmp = expr.op.lexeme;
+    tmp.insert(0, "Operator <");
+    tmp.append("> with unmatch operand type.");
+    throw RuntimeException(expr.op, tmp);
   }
 
   return result;
@@ -154,8 +176,7 @@ void Interpreter::ExecuteBlock(list<Stmt*> statements, Enviroment *env) {
     }
   } catch (const RuntimeException &e) {
     cout << "Catch Runtime exception in block" << endl;
-    error(e.token.line, e.message);
-    cerr << e.what() << endl;
+    runtimeError(e.token.line, e.message);
   }
   delete cur_env;
   cur_env = prev_env;
@@ -169,7 +190,6 @@ void Interpreter::Execute() {
     }
   } catch (const RuntimeException &e) {
     cout << "Catch Runtime exception" << endl;
-    error(e.token.line, e.message);
-    cerr << e.what() << endl;
+    runtimeError(e.token.line, e.message);
   }
 }

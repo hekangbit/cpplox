@@ -6,8 +6,6 @@
 #include "parser.h"
 #include "scanner.h"
 
-bool hadRuntimeError = false;
-
 void run(string &str) {
   Scanner scanner(str);
   scanner.ScanTokens();
