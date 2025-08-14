@@ -1,4 +1,25 @@
-print 23.5 + 31.4;
+print 2>1;
+print 2>3;
+print 4>=4;
+print 5==5;
+print 5!=5;
+var a=nil;
+var b=nil;
+var c=123;
+var d=123;
+var e=234;
+var f="123";
+var h="123";
+var i="234";
+print "compare start";
+print a==b;
+print a==c;
+print c==d;
+print d==e;
+print f==h;
+print f==i;
+print f!=i;
+
 //print "Hello, world!";
 //fun add(a, b) {
 //  return a + b;

@@ -58,6 +58,55 @@ public:
     return Value();
   }
 
+  Value operator>(const Value& other) const {
+    if (isDouble() && other.isDouble()) {
+        return getDouble() > other.getDouble();
+    }
+    return Value();
+  }
+
+  Value operator>=(const Value& other) const {
+    if (isDouble() && other.isDouble()) {
+        return getDouble() >= other.getDouble();
+    }
+    return Value();
+  }
+
+  Value operator<(const Value& other) const {
+    if (isDouble() && other.isDouble()) {
+        return getDouble() < other.getDouble();
+    }
+    return Value();
+  }
+
+  Value operator<=(const Value& other) const {
+    if (isDouble() && other.isDouble()) {
+        return getDouble() <= other.getDouble();
+    }
+    return Value();
+  }
+
+  Value operator==(const Value& other) const {
+    if (isNil() && other.isNil()) {
+      return true;
+    }
+    if (isNil()) {
+      return false;
+    }
+    if (isDouble() && other.isDouble()) {
+        return getDouble() == other.getDouble();
+    }
+    if (isStr() && other.isStr()) {
+      return getString() == other.getString();
+    }
+    return false;
+  }
+
+  Value operator!=(const Value& other) const {
+    Value value = operator==(other);
+    return !(value.getBool());
+  }
+
   string toString() const {
     if (isDouble()) {
       return to_string(getDouble());

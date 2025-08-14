@@ -46,9 +46,7 @@ Value Interpreter::Visit(StringLiteralExpr &expr) {
 Value Interpreter::Visit(UnaryExpr &expr) {
   Value value = Evaluate(expr.right);
   if (expr.op.type == BANG) {
-    if (value.isBool()) {
-      return !value.getBool();
-    }
+    return !IsTruthy(value);
   } else if (expr.op.type == MINUS) {
     if (value.isDouble()) {
       return -(value.getDouble());
@@ -74,6 +72,24 @@ Value Interpreter::Visit(BinaryExpr &expr) {
     break;
   case MINUS:
     result = leftValue - rightValue;
+    break;
+  case GREATER:
+    result = leftValue > rightValue;
+    break;
+  case GREATER_EQUAL:
+    result = leftValue >= rightValue;
+    break;
+  case LESS:
+    result = leftValue < rightValue;
+    break;
+  case LESS_EQUAL:
+    result = leftValue <= rightValue;
+    break;
+  case EQUAL_EQUAL:
+    result = leftValue == rightValue;
+    break;
+  case BANG_EQUAL:
+    result = leftValue != rightValue;
     break;
   default:
     break;

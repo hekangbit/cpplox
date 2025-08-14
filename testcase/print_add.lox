@@ -8,3 +8,5 @@ var b = nil;
 print b;
 var c = "qwer";
 print c;
+var d = 12.34;
+print -d;
