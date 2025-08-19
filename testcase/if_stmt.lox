@@ -1,5 +1,3 @@
-var a = "qq";
-print a+12;
 var a = nil;
 if (a) {
     print "thenstmt";

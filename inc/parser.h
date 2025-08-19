@@ -20,28 +20,33 @@ public:
   Parser(vector<Token> tokens) : tokens(tokens) {}
 
   bool IsAtEnd();
-  Token *Peek();
-  Token *Previous();
-  Token *Advance();
-  Token *Consume(TokenType type, string message);
   bool Check(TokenType type);
   bool Match(initializer_list<TokenType> token_types);
-  ParserException Error(Token *token, string message);
+  token_t Peek();
+  token_t Previous();
+  token_t Advance();
+  token_t Consume(TokenType type, string message);
+
+  ParserException Error(token_t token, string message);
   void Synchronize();
 
-  Expr *Assignment();
-  Expr *Equality();
-  Expr *Comparison();
-  Expr *Term();
-  Expr *Factor();
-  Expr *Unary();
-  Expr *Primary();
-  Expr *Expression();
-  list<Stmt*> Block();
-  Stmt *Statement();
-  Stmt *VarDeclaration();
-  Stmt *Declaration();
-  vector<Stmt *> Parse();
+  expr_t Assignment();
+  expr_t Equality();
+  expr_t Comparison();
+  expr_t Term();
+  expr_t Factor();
+  expr_t Unary();
+  expr_t Primary();
+  expr_t Expression();
+
+  stmt_t printStatement();
+  stmt_t ifStatement();
+  stmt_t blockStatement();
+  stmt_t expressionStatemenmt();
+  stmt_t Statement();
+  stmt_t VarDeclaration();
+  stmt_t Declaration();
+  vector<stmt_t> Parse();
 
 private:
   vector<Token> tokens;

@@ -2,28 +2,6 @@
 
 bool Parser::IsAtEnd() { return current >= tokens.size(); }
 
-Token *Parser::Previous() {
-  if (current == 0) {
-    return nullptr;
-  }
-  return &(tokens[current - 1]);
-}
-
-Token *Parser::Advance() {
-  if (IsAtEnd()) {
-    return Previous();
-  }
-  current++;
-  return Previous();
-}
-
-Token *Parser::Consume(TokenType type, string message) {
-  if (Check(type)) {
-    return Advance();
-  }
-  throw Error(Peek(), message);
-}
-
 bool Parser::Check(TokenType type) {
   if (IsAtEnd()) {
     return false;
@@ -41,14 +19,36 @@ bool Parser::Match(initializer_list<TokenType> token_types) {
   return false;
 }
 
-Token *Parser::Peek() {
+token_t Parser::Previous() {
+  if (current == 0) {
+    return nullptr;
+  }
+  return (&(tokens[current - 1]));
+}
+
+token_t Parser::Advance() {
+  if (IsAtEnd()) {
+    return Previous();
+  }
+  current++;
+  return Previous();
+}
+
+token_t Parser::Consume(TokenType type, string message) {
+  if (Check(type)) {
+    return Advance();
+  }
+  throw Error(Peek(), message);
+}
+
+token_t Parser::Peek() {
   if (IsAtEnd()) {
     return nullptr;
   }
-  return &(tokens[current]);
+  return (&(tokens[current]));
 }
 
-ParserException Parser::Error(Token *token, string message) {
+ParserException Parser::Error(token_t token, string message) {
   if (token == nullptr) {
     message = "at the end, " + message;
     error(tokens.size() ? tokens.back().line : 0, message);
@@ -62,7 +62,7 @@ ParserException Parser::Error(Token *token, string message) {
 void Parser::Synchronize() {
   Advance();
   while (!IsAtEnd()) {
-    Token *curr_token = Peek();
+    token_t curr_token = Peek();
     if (curr_token->type == SEMICOLON) {
       return;
     }
@@ -83,157 +83,179 @@ void Parser::Synchronize() {
   }
 }
 
-Expr *Parser::Assignment() {
-  Expr *expr = Equality();
+expr_t Parser::Assignment() {
+  expr_t expr = Equality();
 
   if (Match({EQUAL})) {
-    Token *equal_token = Previous();
-    Expr *value = Assignment();
-    VariableExpr* var = dynamic_cast<VariableExpr*>(expr);
-    if (var != nullptr) {
-      return new AssignExpr(var->var, value);
+    token_t equal_token = Previous();
+    expr_t value = Assignment();
+    auto var = dynamic_pointer_cast<VariableExpr>(expr);
+    if (var) {
+      return expr_t(new AssignExpr(var->token, value));
     }
-    Error(equal_token, "Invalid assignment target");
+    Error(equal_token, "Invalid assignment target.");
   }
   return expr;
 }
 
-Expr *Parser::Equality() {
-  Expr *expr = Comparison();
+expr_t Parser::Equality() {
+  expr_t expr = Comparison();
   while (Match({EQUAL_EQUAL, BANG_EQUAL})) {
-    Token *op = Previous();
-    Expr *right = Comparison();
-    expr = new BinaryExpr(expr, op, right);
+    token_t op = Previous();
+    expr_t right = Comparison();
+    expr = expr_t(new BinaryExpr(expr, op, right));
   }
   return expr;
 }
 
-Expr *Parser::Comparison() {
-  Expr *expr = Term();
+expr_t Parser::Comparison() {
+  expr_t expr = Term();
   while (Match({LESS_EQUAL, LESS, GREATER_EQUAL, GREATER})) {
-    Token *op = Previous();
-    Expr *right = Term();
-    expr = new BinaryExpr(expr, op, right);
+    token_t op = Previous();
+    expr_t right = Term();
+    expr = expr_t(new BinaryExpr(expr, op, right));
   }
   return expr;
 }
 
-Expr *Parser::Term() {
-  Expr *expr = Factor();
+expr_t Parser::Term() {
+  expr_t expr = Factor();
   while (Match({PLUS, MINUS})) {
-    Token *op = Previous();
-    Expr *right = Factor();
-    expr = new BinaryExpr(expr, op, right);
+    token_t op = Previous();
+    expr_t right = Factor();
+    expr = expr_t(new BinaryExpr(expr, op, right));
   }
   return expr;
 }
 
-Expr *Parser::Factor() {
-  Expr *expr = Unary();
+expr_t Parser::Factor() {
+  expr_t expr = Unary();
   while (Match({STAR, SLASH})) {
-    Token *op = Previous();
-    Expr *right = Unary();
-    expr = new BinaryExpr(expr, op, right);
+    token_t op = Previous();
+    expr_t right = Unary();
+    expr = expr_t(new BinaryExpr(expr, op, right));
   }
   return expr;
 }
 
-Expr *Parser::Unary() {
+expr_t Parser::Unary() {
   if (Match({MINUS, BANG})) {
-    Token *op = Previous();
-    Expr *expr = Unary();
-    return new UnaryExpr(op, expr);
+    token_t op = Previous();
+    expr_t expr = Unary();
+    return expr_t(new UnaryExpr(op, expr));
   }
   return Primary();
 }
 
-Expr *Parser::Primary() {
+expr_t Parser::Primary() {
   if (Match({TRUE})) {
-    return new BoolLiteralExpr(true);
+    return expr_t(new BoolLiteralExpr(true));
   }
   if (Match({FALSE})) {
-    return new BoolLiteralExpr(false);
+    return expr_t(new BoolLiteralExpr(false));
   }
   if (Match({NIL})) {
-    return new NullLiteralExpr();
+    return expr_t(new NullLiteralExpr());
   }
   if (Match({NUMBER})) {
-    return new NumberLiteralExpr(Previous()->literalNum);
+    return expr_t(new NumberLiteralExpr(Previous()->literalNum));
   }
   if (Match({STRING})) {
-    return new StringLiteralExpr(Previous()->literalStr);
+    return expr_t(new StringLiteralExpr(Previous()->literalStr));
   }
   if (Match({LEFT_PAREN})) {
-    Expr *expr = Expression();
+    expr_t expr = Expression();
     Consume(RIGHT_PAREN, "expect ')' after expression.");
-    return new GroupingExpr(expr);
+    return expr_t(new GroupingExpr(expr));
   }
   if (Match({IDENTIFIER})) {
-    return new VariableExpr(Previous());
+    token_t t = Previous();
+    return expr_t(new VariableExpr(t));
   }
   throw Error(Peek(), "expect expr.");
   return nullptr;
 }
 
-Expr *Parser::Expression() { return Assignment(); }
+expr_t Parser::Expression() { return Assignment(); }
 
-list<Stmt*> Parser::Block() {
-  list<Stmt*> result;
+stmt_t Parser::printStatement() {
+  token_t t = Peek();
+  expr_t expr = Expression();
+  stmt_t stmt(new PrintStmt(t, expr));
+  Consume(SEMICOLON, "Expect ';' in print statement.");
+  return stmt_t(stmt);
+}
+
+stmt_t Parser::ifStatement() {
+  Consume(LEFT_PAREN, "Expect '(' after 'if'.");
+  expr_t condition = Expression();
+  Consume(RIGHT_PAREN, "Expect '(' after ')'.");
+  stmt_t thenStmt = Statement();
+  stmt_t elseStmt = nullptr;
+  if (Match({_ELSE})) {
+    elseStmt = Statement();
+  }
+  return stmt_t(new IfStmt(condition, thenStmt, elseStmt));
+}
+
+
+stmt_t Parser::blockStatement() {
+  vector<stmt_t> stmts;
   while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
-    Stmt *stmt = Declaration();
+    stmt_t stmt = Declaration();
     if (stmt) {
-      result.push_back(stmt);
+      stmts.push_back(stmt);
     }
   }
-  return result;
+  Consume(RIGHT_BRACE, "Expect '}' in block statement.");
+  return stmt_t(new BlockStmt(stmts));
 }
 
-Stmt *Parser::Statement() {
-  Stmt *result;
+stmt_t Parser::expressionStatemenmt() {
+  stmt_t stmt(new ExprStmt(Expression()));
+  Consume(SEMICOLON, "Expect ';' in expr statement.");
+  return stmt;
+}
+
+stmt_t Parser::Statement() {
   if (Match({PRINT})) {
-    result = new PrintStmt(Peek(), Expression());
-    Consume(SEMICOLON, "Expect ';' in print statement");
+    return printStatement();
   } else if (Match({LEFT_BRACE})) {
-    result = new BlockStmt(Block());
-    Consume(RIGHT_BRACE, "Expect '}' in block statement");
-  } else {
-    result = new ExprStmt(Expression());
-    Consume(SEMICOLON, "Expect ';' in expr statement");
+    return blockStatement();
+  } else if (Match({IF})) {
+    return ifStatement();
   }
-  return result;
+  return expressionStatemenmt();
 }
 
-Stmt *Parser::VarDeclaration() {
-  Token *token = Consume(IDENTIFIER, "Expect a variable name");
-  Expr *initializer = nullptr;
+stmt_t Parser::VarDeclaration() {
+  token_t token = Consume(IDENTIFIER, "Expect a variable name.");
+  expr_t initializer = nullptr;
   if (Match({EQUAL})) {
     initializer = Expression();
   }
-  Consume(SEMICOLON, "Expect ';' in var declaration statement");
-  return new VarStmt(token, initializer);
+  Consume(SEMICOLON, "Expect ';' in var declaration statement.");
+  return stmt_t(new VarStmt(token, initializer));
 }
 
-Stmt *Parser::Declaration() {
-  Stmt *result;
+stmt_t Parser::Declaration() {
   try {
     if (Match({VAR})) {
-      result = VarDeclaration();
-    } else {
-      result = Statement();
+      return VarDeclaration();
     }
-    return result;
+    return Statement();
   } catch (const ParserException &e) {
-    cout << "Catch Parser exception" << endl;
+    cout << "Catch Parser exception." << endl;
     cerr << e.what() << endl;
     Synchronize();
     return nullptr;
   }
 }
 
-vector<Stmt *> Parser::Parse() {
-  vector<Stmt *> statements;
+vector<stmt_t> Parser::Parse() {
+  vector<stmt_t> statements;
   while (!IsAtEnd()) {
-    Stmt *stmt = Declaration();
+    stmt_t stmt = Declaration();
     if (stmt) {
       statements.push_back(stmt);
     }

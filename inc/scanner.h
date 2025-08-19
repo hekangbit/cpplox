@@ -12,7 +12,7 @@ public:
   void ScanToken();
   void ScanTokens();
   void Dump();
-  vector<Token> &GetTokens();
+  vector<Token> GetTokens() { return tokens; }
 
 private:
   bool IsAtEnd() const;

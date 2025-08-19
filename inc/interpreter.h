@@ -13,10 +13,10 @@
 
 class RuntimeException : public exception {
 public:
-  RuntimeException(Token token, string message)
+  RuntimeException(token_t token, string message)
       : token(token), message(message) {}
   const char *what() const throw() { return message.c_str(); }
-  Token token;
+  token_t token;
   string message;
 };
 
@@ -24,9 +24,9 @@ class Enviroment {
 public:
   Enviroment() : enclosing(nullptr) {}
   Enviroment(Enviroment *enclosing) : enclosing(enclosing) {}
-  void Define(Token &name, const Value value);
-  void Assign(Token &name, const Value value);
-  Value Get(Token &name);
+  void Define(token_t name, const Value value);
+  void Assign(token_t name, const Value value);
+  Value Get(token_t name);
 
 private:
   unordered_map<string, Value> values;
@@ -35,12 +35,12 @@ private:
 
 class Interpreter : public Visitor {
 public:
-  Interpreter(vector<Stmt *> statements) : statements(statements) {}
+  Interpreter(vector<stmt_t> statements) : statements(statements) {}
   ~Interpreter() {}
 
   bool IsTruthy(Value &value);
-  void CheckNumOperand(const Token &op, const Value &value);
-  void CheckNumOperands(const Token &op, const Value &left, const Value &right);
+  void CheckNumOperand(const token_t op, const Value &value);
+  void CheckNumOperands(const token_t op, const Value &left, const Value &right);
 
   virtual Value Visit(NumberLiteralExpr &expr);
   virtual Value Visit(StringLiteralExpr &expr);
@@ -55,13 +55,15 @@ public:
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);
   virtual void Visit(VarStmt &stmt);
+  virtual void Visit(IfStmt &stmt);
 
-  Value Evaluate(Expr *expr);
-  void ExecuteBlock(list<Stmt*> statements, Enviroment *env);
+  Value Evaluate(expr_t expr);
+  void Execute(vector<stmt_t> statements, Enviroment *env);
+  void Execute(stmt_t stmt);
   void Execute();
 
 private:
-  vector<Stmt *> statements;
+  vector<stmt_t> statements;
   Enviroment global_env;
   Enviroment *cur_env;
 };

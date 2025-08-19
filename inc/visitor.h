@@ -16,6 +16,7 @@ class ExprStmt;
 class PrintStmt;
 class BlockStmt;
 class VarStmt;
+class IfStmt;
 
 class Visitor {
 public:
@@ -33,6 +34,7 @@ public:
   virtual void Visit(PrintStmt &stmt) = 0;
   virtual void Visit(BlockStmt &stmt) = 0;
   virtual void Visit(VarStmt &stmt) = 0;
+  virtual void Visit(IfStmt &stmt) = 0;
 };
 
 #endif

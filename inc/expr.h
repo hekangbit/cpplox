@@ -9,8 +9,11 @@
 class Expr {
 public:
   Expr() {}
+  virtual ~Expr() {}
   virtual Value Accept(Visitor &visitor) = 0;
 };
+
+using expr_t = shared_ptr<Expr>;
 
 class NullLiteralExpr : public Expr {
 public:
@@ -41,42 +44,42 @@ public:
 
 class UnaryExpr : public Expr {
 public:
-  UnaryExpr(Token *op, Expr *right) : op(*op), right(right) {}
+  UnaryExpr(token_t op, expr_t right) : op(op), right(right) {}
   Value Accept(Visitor &visitor) { return visitor.Visit(*this); }
-  Expr *right;
-  Token op;
+  expr_t right;
+  token_t op;
 };
 
 class BinaryExpr : public Expr {
 public:
-  BinaryExpr(Expr *left, Token *op, Expr *right)
-      : left(left), op(*op), right(right) {}
+  BinaryExpr(expr_t left, token_t op, expr_t right)
+      : left(left), op(op), right(right) {}
   Value Accept(Visitor &visitor) { return visitor.Visit(*this); }
-  Expr *left;
-  Expr *right;
-  Token op;
+  expr_t left;
+  expr_t right;
+  token_t op;
 };
 
 class GroupingExpr : public Expr {
 public:
-  GroupingExpr(Expr *expr) : expr(expr) {}
+  GroupingExpr(expr_t expr) : expr(expr) {}
   Value Accept(Visitor &visitor) { return visitor.Visit(*this); }
-  Expr *expr;
+  expr_t expr;
 };
 
 class VariableExpr : public Expr {
 public:
-  VariableExpr(Token *var) : var(*var) {}
+  VariableExpr(token_t token) : token(token) {}
   Value Accept(Visitor &visitor) { return visitor.Visit(*this); }
-  Token var;
+  token_t token;
 };
 
 class AssignExpr : public Expr {
 public:
-  AssignExpr(Token name, Expr *value) : name(name), value(value) {}
+  AssignExpr(token_t name, expr_t value) : name(name), value(value) {}
   Value Accept(Visitor &visitor) { return visitor.Visit(*this); }
-  Expr *value;
-  Token name;
+  expr_t value;
+  token_t name;
 };
 
 #endif

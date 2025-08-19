@@ -198,5 +198,3 @@ void Scanner::Dump() {
     cout << it.GetText() << endl;
   }
 }
-
-vector<Token> &Scanner::GetTokens() { return tokens; }

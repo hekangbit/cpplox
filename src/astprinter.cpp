@@ -5,7 +5,7 @@ void AstPrinter::Walk(Expr &expr) {
   cout << res << endl;
 }
 
-string AstPrinter::Parenthesize(string &name, vector<Expr *> &exprs) {
+string AstPrinter::Parenthesize(string &name, vector<expr_t> &exprs) {
   string res;
   // cout << "(" << name;
   res += "(";
@@ -43,13 +43,13 @@ Value AstPrinter::Visit(BoolLiteralExpr &expr) {
 }
 
 Value AstPrinter::Visit(UnaryExpr &expr) {
-  vector<Expr *> exprs{expr.right};
-  return Parenthesize(expr.op.lexeme, exprs);
+  vector<expr_t> exprs{expr.right};
+  return Parenthesize(expr.op->lexeme, exprs);
 }
 
 Value AstPrinter::Visit(BinaryExpr &expr) {
-  vector<Expr *> exprs{expr.left, expr.right};
-  return Parenthesize(expr.op.lexeme, exprs);
+  vector<expr_t> exprs{expr.left, expr.right};
+  return Parenthesize(expr.op->lexeme, exprs);
 }
 
 Value AstPrinter::Visit(GroupingExpr &expr) {
@@ -63,7 +63,7 @@ Value AstPrinter::Visit(GroupingExpr &expr) {
   return res;
 }
 
-Value AstPrinter::Visit(VariableExpr &expr) { return expr.var.lexeme; }
+Value AstPrinter::Visit(VariableExpr &expr) { return expr.token->lexeme; }
 
 Value AstPrinter::Visit(AssignExpr &expr) {
   return Value();
@@ -76,3 +76,5 @@ void AstPrinter::Visit(PrintStmt &stmt) {}
 void AstPrinter::Visit(BlockStmt &stmt) {}
 
 void AstPrinter::Visit(VarStmt &stmt) {}
+
+void AstPrinter::Visit(IfStmt &stmt) {}

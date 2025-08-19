@@ -1,28 +1,28 @@
 #include "interpreter.h"
 
-void Enviroment::Define(Token &name, const Value value) {
-  values[name.lexeme] = value;
+void Enviroment::Define(token_t name, const Value value) {
+  values[name->lexeme] = value;
 }
 
-void Enviroment::Assign(Token &name, const Value value) {
-  if (values.count(name.lexeme)) {
-    values[name.lexeme] = value;
+void Enviroment::Assign(token_t name, const Value value) {
+  if (values.count(name->lexeme)) {
+    values[name->lexeme] = value;
     return;
   }
   if (enclosing != nullptr) {
     enclosing->Assign(name, value);
   }
-  throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
+  throw RuntimeException(name, string("Undefined variable <") + name->lexeme + "> .");
 }
 
-Value Enviroment::Get(Token &name) {
-  if (values.count(name.lexeme)) {
-    return values[name.lexeme];
+Value Enviroment::Get(token_t name) {
+  if (values.count(name->lexeme)) {
+    return values[name->lexeme];
   }
   if (enclosing != nullptr) {
     return enclosing->Get(name);
   }
-  throw RuntimeException(name, string("Undefined variable ") + name.lexeme + " .");
+  throw RuntimeException(name, string("Undefined variable <") + name->lexeme + "> .");
 }
 
 bool Interpreter::IsTruthy(Value &value) {
@@ -35,21 +35,21 @@ bool Interpreter::IsTruthy(Value &value) {
   return true;
 }
 
-void Interpreter::CheckNumOperand(const Token &op, const Value &value) {
+void Interpreter::CheckNumOperand(const token_t op, const Value &value) {
   if (value.isDouble()) {
     return;
   }
-  string tmp = op.lexeme;
+  string tmp = op->lexeme;
   tmp.insert(0, "For operator <");
   tmp.append(">, Operand must be a number.");
   throw RuntimeException(op, tmp);
 }
 
-void Interpreter::CheckNumOperands(const Token &op, const Value &left, const Value &right) {
+void Interpreter::CheckNumOperands(const token_t op, const Value &left, const Value &right) {
   if (left.isDouble() && right.isDouble()) {
     return;
   }
-  string tmp = op.lexeme;
+  string tmp = op->lexeme;
   tmp.insert(0, "For operator <");
   tmp.append(">, Operands must be a numbers.");
   throw RuntimeException(op, tmp);
@@ -65,9 +65,9 @@ Value Interpreter::Visit(StringLiteralExpr &expr) {
 
 Value Interpreter::Visit(UnaryExpr &expr) {
   Value value = Evaluate(expr.right);
-  if (expr.op.type == BANG) {
+  if (expr.op->type == BANG) {
     return !IsTruthy(value);
-  } else if (expr.op.type == MINUS) {
+  } else if (expr.op->type == MINUS) {
     CheckNumOperand(expr.op, value);
     return -(value.getDouble());
   }
@@ -79,7 +79,7 @@ Value Interpreter::Visit(BinaryExpr &expr) {
   Value rightValue = Evaluate(expr.right);
   Value result;
 
-  switch (expr.op.type) {
+  switch (expr.op->type) {
   case STAR:
     result = leftValue * rightValue;
     break;
@@ -115,7 +115,7 @@ Value Interpreter::Visit(BinaryExpr &expr) {
   }
 
   if (result.isNil()) {
-    string tmp = expr.op.lexeme;
+    string tmp = expr.op->lexeme;
     tmp.insert(0, "Operator <");
     tmp.append("> with unmatch operand type.");
     throw RuntimeException(expr.op, tmp);
@@ -135,7 +135,7 @@ Value Interpreter::Visit(BoolLiteralExpr &expr) {
 }
 
 Value Interpreter::Visit(VariableExpr &expr) {
-  return cur_env->Get(expr.var);
+  return cur_env->Get(expr.token);
 }
 
 Value Interpreter::Visit(AssignExpr &expr) {
@@ -154,7 +154,7 @@ void Interpreter::Visit(PrintStmt &stmt) {
 }
 
 void Interpreter::Visit(BlockStmt &stmt) {
-  ExecuteBlock(stmt.statements, cur_env);
+  Execute(stmt.statements, cur_env);
 }
 
 void Interpreter::Visit(VarStmt &stmt) {
@@ -162,12 +162,21 @@ void Interpreter::Visit(VarStmt &stmt) {
   if (stmt.initializer != nullptr) {
     value = Evaluate(stmt.initializer);
   }
-  cur_env->Define(*(stmt.token), value);
+  cur_env->Define(stmt.token, value);
 }
 
-Value Interpreter::Evaluate(Expr *expr) { return expr->Accept(*this); }
+void Interpreter::Visit(IfStmt &stmt) {
+  Value value = Evaluate(stmt.condition);
+  if (IsTruthy(value)) {
+    Execute(stmt.thenStmt);
+  } else {
+    Execute(stmt.elseStmt);
+  }
+}
 
-void Interpreter::ExecuteBlock(list<Stmt*> statements, Enviroment *env) {
+Value Interpreter::Evaluate(expr_t expr) { return expr->Accept(*this); }
+
+void Interpreter::Execute(vector<stmt_t> statements, Enviroment *env) {
   Enviroment *prev_env = env;
   cur_env = new Enviroment(env);
   try {
@@ -176,10 +185,16 @@ void Interpreter::ExecuteBlock(list<Stmt*> statements, Enviroment *env) {
     }
   } catch (const RuntimeException &e) {
     cout << "Catch Runtime exception in block" << endl;
-    runtimeError(e.token.line, e.message);
+    runtimeError(e.token->line, e.message);
   }
   delete cur_env;
   cur_env = prev_env;
+}
+
+void Interpreter::Execute(stmt_t stmt) {
+  if (stmt) {
+    stmt->Accept(*this);
+  }
 }
 
 void Interpreter::Execute() {
@@ -190,6 +205,6 @@ void Interpreter::Execute() {
     }
   } catch (const RuntimeException &e) {
     cout << "Catch Runtime exception" << endl;
-    runtimeError(e.token.line, e.message);
+    runtimeError(e.token->line, e.message);
   }
 }

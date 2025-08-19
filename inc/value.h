@@ -4,10 +4,6 @@
 #include <variant>
 #include "common.h"
 
-
-
-
-
 class Value {
 public:
   Value() {} // NIL

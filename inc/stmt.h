@@ -5,42 +5,55 @@
 #include "expr.h"
 #include "token.h"
 #include "visitor.h"
-#include <list>
+#include <vector>
 
 class Stmt {
 public:
   Stmt() {}
+  virtual ~Stmt() {}
   virtual void Accept(Visitor &visitor) = 0;
 };
 
+using stmt_t = shared_ptr<Stmt>;
+
 class ExprStmt : public Stmt {
 public:
-  ExprStmt(Expr *expr) : expr(expr) {}
+  ExprStmt(expr_t expr) : expr(expr) {}
   virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
-  Expr *expr;
+  expr_t expr;
 };
 
 class PrintStmt : public Stmt {
 public:
-  PrintStmt(Token *token, Expr *expr) : token(token), expr(expr) {}
+  PrintStmt(token_t token, expr_t expr) : token(token), expr(expr) {}
   virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
-  Token *token;
-  Expr *expr;
+  token_t token;
+  expr_t expr;
 };
 
 class VarStmt : public Stmt {
 public:
-  VarStmt(Token *token, Expr *initializer) : token(token), initializer(initializer) {}
+  VarStmt(token_t token, expr_t initializer) : token(token), initializer(initializer) {}
   virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
-  Token *token;
-  Expr *initializer;
+  token_t token;
+  expr_t initializer;
 };
 
 class BlockStmt : public Stmt {
 public:
-  BlockStmt(list<Stmt*> statements) : statements(statements) {}
+  BlockStmt(vector<stmt_t> statements) : statements(statements) {}
   virtual void Accept(Visitor &visitor) { visitor.Visit(*this); };
-  list<Stmt*> statements;
+  vector<stmt_t> statements;
 };
+
+class IfStmt : public Stmt {
+public:
+  IfStmt(expr_t condition, stmt_t thenStmt, stmt_t elseStmt) : condition(condition), thenStmt(thenStmt), elseStmt(elseStmt) {}
+  virtual void Accept(Visitor &visitor) { visitor.Visit(*this); };
+  expr_t condition;
+  stmt_t thenStmt;
+  stmt_t elseStmt;
+};
+
 
 #endif

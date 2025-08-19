@@ -9,7 +9,7 @@ public:
   AstPrinter() {}
   ~AstPrinter() {}
   void Walk(Expr &expr);
-  string Parenthesize(string &name, vector<Expr *> &exprs);
+  string Parenthesize(string &name, vector<expr_t> &exprs);
   virtual Value Visit(NumberLiteralExpr &expr);
   virtual Value Visit(StringLiteralExpr &expr);
   virtual Value Visit(UnaryExpr &expr);
@@ -23,6 +23,7 @@ public:
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);
   virtual void Visit(VarStmt &stmt);
+  virtual void Visit(IfStmt &stmt);
 
 private:
 };

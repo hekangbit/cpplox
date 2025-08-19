@@ -11,7 +11,7 @@ void run(string &str) {
   scanner.ScanTokens();
 
   Parser parser(scanner.GetTokens());
-  vector<Stmt *> statements = parser.Parse();
+  vector<stmt_t> statements = parser.Parse();
 
   Interpreter interpreter(statements);
   interpreter.Execute();
@@ -26,7 +26,8 @@ int RunFile(string filename) {
   f.seekg(0, f.end);
   int64_t len = f.tellg();
   f.seekg(0, f.beg);
-  char *buffer = new char[len];
+  char *buffer = new char[len + 1];
+  memset(buffer, 0x00, len + 1);
   f.read(buffer, len);
   string str(buffer);
   f.close();
