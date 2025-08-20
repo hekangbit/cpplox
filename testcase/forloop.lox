@@ -1,5 +1,14 @@
 // CPP Lox Lang VM
 var a = 0;
+
+print "01";
 for (a = 1; a < 5; a = a+1) {
     print a;
+}
+
+print "02";
+a = 10;
+for (; a < 17;) {
+    print a;
+    a = a+2;
 }

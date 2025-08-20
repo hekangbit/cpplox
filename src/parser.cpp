@@ -245,7 +245,6 @@ stmt_t Parser::forStatement() {
   expr_t increment = nullptr;
 
   Consume(LEFT_PAREN, "Expect '(' after for.");
-
   if (Match({SEMICOLON})) {
     initializer = nullptr;
   } else if (Match({VAR})) {
@@ -266,8 +265,14 @@ stmt_t Parser::forStatement() {
   if (increment) {
     body = stmt_t(new BlockStmt(vector<stmt_t>{body, stmt_t(new ExprStmt(increment))}));
   }
-  stmt_t while_entity = stmt_t(new WhileStmt(condition, body));
-  return stmt_t(new BlockStmt(vector<stmt_t>{initializer, while_entity}));
+  if (condition == nullptr) {
+    condition = expr_t(new BoolLiteralExpr(true));
+  }
+  body = stmt_t(new WhileStmt(condition, body));
+  if (initializer) {
+    body = stmt_t(new BlockStmt(vector<stmt_t>{initializer, body}));
+  }
+  return body;
 }
 
 stmt_t Parser::expressionStatemenmt() {
