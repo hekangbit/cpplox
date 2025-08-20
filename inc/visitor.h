@@ -18,6 +18,7 @@ class PrintStmt;
 class BlockStmt;
 class VarStmt;
 class IfStmt;
+class WhileStmt;
 
 class Visitor {
 public:
@@ -37,6 +38,7 @@ public:
   virtual void Visit(BlockStmt &stmt) = 0;
   virtual void Visit(VarStmt &stmt) = 0;
   virtual void Visit(IfStmt &stmt) = 0;
+  virtual void Visit(WhileStmt &stmt) = 0;
 };
 
 #endif

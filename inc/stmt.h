@@ -55,5 +55,12 @@ public:
   stmt_t elseStmt;
 };
 
+class WhileStmt : public Stmt {
+public:
+  WhileStmt(expr_t condition, stmt_t body) : condition(condition), body(body) {}
+  virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
+  expr_t condition;
+  stmt_t body;
+};
 
 #endif

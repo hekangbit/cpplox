@@ -9,6 +9,7 @@ bool Parser::Check(TokenType type) {
   return Peek()->type == type;
 }
 
+// will consume the token is matched
 bool Parser::Match(initializer_list<TokenType> token_types) {
   for (auto &it : token_types) {
     if (Check(it)) {
@@ -209,7 +210,7 @@ stmt_t Parser::printStatement() {
 stmt_t Parser::ifStatement() {
   Consume(LEFT_PAREN, "Expect '(' after 'if'.");
   expr_t condition = Expression();
-  Consume(RIGHT_PAREN, "Expect '(' after ')'.");
+  Consume(RIGHT_PAREN, "Expect ')' after 'condition'.");
   stmt_t thenStmt = Statement();
   stmt_t elseStmt = nullptr;
   if (Match({_ELSE})) {
@@ -217,7 +218,6 @@ stmt_t Parser::ifStatement() {
   }
   return stmt_t(new IfStmt(condition, thenStmt, elseStmt));
 }
-
 
 stmt_t Parser::blockStatement() {
   vector<stmt_t> stmts;
@@ -229,6 +229,14 @@ stmt_t Parser::blockStatement() {
   }
   Consume(RIGHT_BRACE, "Expect '}' in block statement.");
   return stmt_t(new BlockStmt(stmts));
+}
+
+stmt_t Parser::whileStatement() {
+  Consume(LEFT_PAREN, "Expect '(' after 'while'.");
+  expr_t condition = Expression();
+  Consume(RIGHT_PAREN, "Expect ')' after 'condition'.");
+  stmt_t body = Statement();
+  return stmt_t(new WhileStmt(condition, body));
 }
 
 stmt_t Parser::expressionStatemenmt() {
@@ -244,6 +252,8 @@ stmt_t Parser::Statement() {
     return blockStatement();
   } else if (Match({IF})) {
     return ifStatement();
+  } else if (Match({WHILE})) {
+    return whileStatement();
   }
   return expressionStatemenmt();
 }

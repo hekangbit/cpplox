@@ -38,7 +38,7 @@ public:
   Interpreter(vector<stmt_t> statements) : statements(statements) {}
   ~Interpreter() {}
 
-  bool IsTruthy(Value &value);
+  bool IsTruthy(Value value);
   void CheckNumOperand(const token_t op, const Value &value);
   void CheckNumOperands(const token_t op, const Value &left, const Value &right);
 
@@ -57,6 +57,7 @@ public:
   virtual void Visit(BlockStmt &stmt);
   virtual void Visit(VarStmt &stmt);
   virtual void Visit(IfStmt &stmt);
+  virtual void Visit(WhileStmt &stmt);
 
   Value Evaluate(expr_t expr);
   void Execute(vector<stmt_t> statements, Enviroment *env);

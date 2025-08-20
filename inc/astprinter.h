@@ -25,6 +25,7 @@ public:
   virtual void Visit(BlockStmt &stmt);
   virtual void Visit(VarStmt &stmt);
   virtual void Visit(IfStmt &stmt);
+  virtual void Visit(WhileStmt &stmt);
 
 private:
 };

@@ -83,3 +83,5 @@ void AstPrinter::Visit(BlockStmt &stmt) {}
 void AstPrinter::Visit(VarStmt &stmt) {}
 
 void AstPrinter::Visit(IfStmt &stmt) {}
+
+void AstPrinter::Visit(WhileStmt &stmt) {}

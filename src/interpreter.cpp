@@ -11,6 +11,7 @@ void Enviroment::Assign(token_t name, const Value value) {
   }
   if (enclosing != nullptr) {
     enclosing->Assign(name, value);
+    return;
   }
   throw RuntimeException(name, string("Undefined variable <") + name->lexeme + "> .");
 }
@@ -25,7 +26,7 @@ Value Enviroment::Get(token_t name) {
   throw RuntimeException(name, string("Undefined variable <") + name->lexeme + "> .");
 }
 
-bool Interpreter::IsTruthy(Value &value) {
+bool Interpreter::IsTruthy(Value value) {
   if (value.isNil()) {
     return false;
   }
@@ -181,6 +182,12 @@ void Interpreter::Visit(IfStmt &stmt) {
     Execute(stmt.thenStmt);
   } else {
     Execute(stmt.elseStmt);
+  }
+}
+
+void Interpreter::Visit(WhileStmt &stmt) {
+  while (IsTruthy(Evaluate(stmt.condition))) {
+    Execute(stmt.body);
   }
 }
 

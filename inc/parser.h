@@ -44,6 +44,7 @@ public:
   stmt_t printStatement();
   stmt_t ifStatement();
   stmt_t blockStatement();
+  stmt_t whileStatement();
   stmt_t expressionStatemenmt();
   stmt_t Statement();
   stmt_t VarDeclaration();
