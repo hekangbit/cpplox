@@ -1,0 +1,46 @@
+// CPP Lox Lang VM
+// 0: false
+// 1: true
+// 2: false
+// 3: true
+// 4: false
+// 5: true
+
+var a = true;
+var b = false;
+
+if (!a and b) {
+    print "0: true";
+} else {
+    print "0: false";
+}
+
+if (a and !b) {
+    print "1: true";
+} else {
+    print "1: false";
+}
+
+if (a and b) {
+    print "2: true";
+} else {
+    print "2: false";
+}
+
+if (a or b) {
+    print "3: true";
+} else {
+    print "3: false";
+}
+
+if (!a or b) {
+    print "4: true";
+} else {
+    print "4: false";
+}
+
+if (!a or !b) {
+    print "5: true";
+} else {
+    print "5: false";
+}

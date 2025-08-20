@@ -138,6 +138,16 @@ Value Interpreter::Visit(VariableExpr &expr) {
   return cur_env->Get(expr.token);
 }
 
+Value Interpreter::Visit(LogicalExpr &expr) {
+  Value leftVal = Evaluate(expr.left);
+  if (expr.op->type == OR) {
+    return (IsTruthy(leftVal)) ? true : Evaluate(expr.right);
+  } else if (expr.op->type == AND) {
+    return (!IsTruthy(leftVal)) ? false : Evaluate(expr.right);
+  }
+  throw RuntimeException(expr.op, "Invalid operator for logical expr.");
+}
+
 Value Interpreter::Visit(AssignExpr &expr) {
   Value value = Evaluate(expr.value);
   cur_env->Assign(expr.name, value);

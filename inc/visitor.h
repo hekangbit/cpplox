@@ -11,6 +11,7 @@ class GroupingExpr;
 class NullLiteralExpr;
 class BoolLiteralExpr;
 class VariableExpr;
+class LogicalExpr;
 class AssignExpr;
 class ExprStmt;
 class PrintStmt;
@@ -28,6 +29,7 @@ public:
   virtual Value Visit(GroupingExpr &expr) = 0;
   virtual Value Visit(NullLiteralExpr &expr) = 0;
   virtual Value Visit(BoolLiteralExpr &expr) = 0;
+  virtual Value Visit(LogicalExpr &expr) = 0;
   virtual Value Visit(VariableExpr &expr) = 0;
   virtual Value Visit(AssignExpr &expr) = 0;
   virtual void Visit(ExprStmt &stmt) = 0;

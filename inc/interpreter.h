@@ -50,6 +50,7 @@ public:
   virtual Value Visit(NullLiteralExpr &expr);
   virtual Value Visit(BoolLiteralExpr &expr);
   virtual Value Visit(VariableExpr &expr);
+  virtual Value Visit(LogicalExpr &expr);
   virtual Value Visit(AssignExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);

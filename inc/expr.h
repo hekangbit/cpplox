@@ -74,6 +74,16 @@ public:
   token_t token;
 };
 
+class LogicalExpr : public Expr {
+public:
+  LogicalExpr(expr_t left, token_t op, expr_t right)
+      : left(left), op(op), right(right) {}
+  Value Accept(Visitor &visitor) { return visitor.Visit(*this); }
+  expr_t left;
+  expr_t right;
+  token_t op;
+};
+
 class AssignExpr : public Expr {
 public:
   AssignExpr(token_t name, expr_t value) : name(name), value(value) {}

@@ -31,6 +31,8 @@ public:
   void Synchronize();
 
   expr_t Assignment();
+  expr_t LogicalOr();
+  expr_t LogicalAnd();
   expr_t Equality();
   expr_t Comparison();
   expr_t Term();

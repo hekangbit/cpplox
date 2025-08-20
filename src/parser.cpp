@@ -83,8 +83,28 @@ void Parser::Synchronize() {
   }
 }
 
-expr_t Parser::Assignment() {
+expr_t Parser::LogicalAnd() {
   expr_t expr = Equality();
+  if (Match({AND})) {
+    token_t token = Previous();
+    expr_t right = Equality();
+    return expr_t(new LogicalExpr(expr, token, right));
+  }
+  return expr;
+}
+
+expr_t Parser::LogicalOr() {
+  expr_t expr = LogicalAnd();
+  if (Match({OR})) {
+    token_t token = Previous();
+    expr_t right = LogicalAnd();
+    return expr_t(new LogicalExpr(expr, token, right));
+  }
+  return expr;
+}
+
+expr_t Parser::Assignment() {
+  expr_t expr = LogicalOr();
 
   if (Match({EQUAL})) {
     token_t equal_token = Previous();
