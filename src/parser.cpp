@@ -208,9 +208,9 @@ stmt_t Parser::printStatement() {
 }
 
 stmt_t Parser::ifStatement() {
-  Consume(LEFT_PAREN, "Expect '(' after 'if'.");
+  Consume(LEFT_PAREN, "Expect '(' after if.");
   expr_t condition = Expression();
-  Consume(RIGHT_PAREN, "Expect ')' after 'condition'.");
+  Consume(RIGHT_PAREN, "Expect ')' after if condition.");
   stmt_t thenStmt = Statement();
   stmt_t elseStmt = nullptr;
   if (Match({_ELSE})) {
@@ -232,11 +232,42 @@ stmt_t Parser::blockStatement() {
 }
 
 stmt_t Parser::whileStatement() {
-  Consume(LEFT_PAREN, "Expect '(' after 'while'.");
+  Consume(LEFT_PAREN, "Expect '(' after while.");
   expr_t condition = Expression();
-  Consume(RIGHT_PAREN, "Expect ')' after 'condition'.");
+  Consume(RIGHT_PAREN, "Expect ')' after while condition.");
   stmt_t body = Statement();
   return stmt_t(new WhileStmt(condition, body));
+}
+
+stmt_t Parser::forStatement() {
+  stmt_t initializer;
+  expr_t condition = nullptr;
+  expr_t increment = nullptr;
+
+  Consume(LEFT_PAREN, "Expect '(' after for.");
+
+  if (Match({SEMICOLON})) {
+    initializer = nullptr;
+  } else if (Match({VAR})) {
+    initializer = VarDeclaration();
+  } else {
+    initializer = expressionStatemenmt();
+  }
+  if (!Check(SEMICOLON)) {
+    condition = Expression();
+  }
+  Consume(SEMICOLON, "Expect ';' after for loop condition.");
+  if (!Check(RIGHT_PAREN)) {
+    increment = Expression();
+  }
+  Consume(RIGHT_PAREN, "Expect ')' after for loop clause.");
+
+  stmt_t body = Statement();
+  if (increment) {
+    body = stmt_t(new BlockStmt(vector<stmt_t>{body, stmt_t(new ExprStmt(increment))}));
+  }
+  stmt_t while_entity = stmt_t(new WhileStmt(condition, body));
+  return stmt_t(new BlockStmt(vector<stmt_t>{initializer, while_entity}));
 }
 
 stmt_t Parser::expressionStatemenmt() {
@@ -254,6 +285,8 @@ stmt_t Parser::Statement() {
     return ifStatement();
   } else if (Match({WHILE})) {
     return whileStatement();
+  } else if (Match({FOR})) {
+    return forStatement();
   }
   return expressionStatemenmt();
 }
