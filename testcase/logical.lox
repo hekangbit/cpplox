@@ -6,6 +6,9 @@
 // 4: false
 // 5: true
 
+print "hi" or 2; // "hi".
+print nil or "yes"; // "yes".
+
 var a = true;
 var b = false;
 

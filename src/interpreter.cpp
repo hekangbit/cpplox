@@ -141,9 +141,9 @@ Value Interpreter::Visit(VariableExpr &expr) {
 Value Interpreter::Visit(LogicalExpr &expr) {
   Value leftVal = Evaluate(expr.left);
   if (expr.op->type == OR) {
-    return (IsTruthy(leftVal)) ? true : Evaluate(expr.right);
+    return (IsTruthy(leftVal)) ? leftVal : Evaluate(expr.right);
   } else if (expr.op->type == AND) {
-    return (!IsTruthy(leftVal)) ? false : Evaluate(expr.right);
+    return (!IsTruthy(leftVal)) ? leftVal : Evaluate(expr.right);
   }
   throw RuntimeException(expr.op, "Invalid operator for logical expr.");
 }
