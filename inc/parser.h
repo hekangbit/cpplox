@@ -46,6 +46,7 @@ public:
   stmt_t blockStatement();
   stmt_t whileStatement();
   stmt_t forStatement();
+  stmt_t breakStatement();
   stmt_t expressionStatemenmt();
   stmt_t Statement();
   stmt_t VarDeclaration();
@@ -55,6 +56,7 @@ public:
 private:
   vector<Token> tokens;
   int32_t current = 0;
+  bool isInsideLoop = false;
 };
 
 #endif

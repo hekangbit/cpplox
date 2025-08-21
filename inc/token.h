@@ -41,6 +41,7 @@ typedef enum {
   _ELSE,
   FOR,
   WHILE,
+  BREAK,
   NIL,
   END_LOX,
   TYPE_NUM

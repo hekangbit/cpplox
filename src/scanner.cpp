@@ -5,7 +5,7 @@ map<string, TokenType> Scanner::keywords = {
     {"and", AND},     {"or", OR},      {"true", TRUE},   {"false", FALSE},
     {"if", IF},       {"else", _ELSE}, {"for", FOR},     {"while", WHILE},
     {"var", VAR},     {"this", _THIS}, {"super", SUPER}, {"return", RETURN},
-    {"print", PRINT}, {"fun", FUN},    {"class", CLASS}, {"nil", NIL}};
+    {"print", PRINT}, {"fun", FUN},    {"class", CLASS}, {"break", BREAK}, {"nil", NIL}};
 
 bool Scanner::IsAtEnd() const { return current >= source.size(); }
 

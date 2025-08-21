@@ -20,6 +20,10 @@ public:
   string message;
 };
 
+class RuntimeBreak : public exception {
+public:
+};
+
 class Enviroment {
 public:
   Enviroment() : enclosing(nullptr) {}
@@ -58,6 +62,7 @@ public:
   virtual void Visit(VarStmt &stmt);
   virtual void Visit(IfStmt &stmt);
   virtual void Visit(WhileStmt &stmt);
+  virtual void Visit(BreakStmt &stmt);
 
   Value Evaluate(expr_t expr);
   void Execute(vector<stmt_t> statements, Enviroment *env);

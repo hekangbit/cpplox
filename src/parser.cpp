@@ -232,17 +232,21 @@ stmt_t Parser::blockStatement() {
 }
 
 stmt_t Parser::whileStatement() {
+  isInsideLoop = true;
   Consume(LEFT_PAREN, "Expect '(' after while.");
   expr_t condition = Expression();
   Consume(RIGHT_PAREN, "Expect ')' after while condition.");
   stmt_t body = Statement();
-  return stmt_t(new WhileStmt(condition, body));
+  stmt_t stmt = stmt_t(new WhileStmt(condition, body));
+  isInsideLoop = false;
+  return stmt;
 }
 
 stmt_t Parser::forStatement() {
   stmt_t initializer;
   expr_t condition = nullptr;
   expr_t increment = nullptr;
+  isInsideLoop = true;
 
   Consume(LEFT_PAREN, "Expect '(' after for.");
   if (Match({SEMICOLON})) {
@@ -272,7 +276,17 @@ stmt_t Parser::forStatement() {
   if (initializer) {
     body = stmt_t(new BlockStmt(vector<stmt_t>{initializer, body}));
   }
+  isInsideLoop = false;
   return body;
+}
+
+stmt_t Parser::breakStatement() {
+  if (!isInsideLoop) {
+    throw Error(Previous(), "Expect break inside a loop.");
+  }
+  stmt_t stmt(new BreakStmt());
+  Consume(SEMICOLON, "Expect ';' in break statement.");
+  return stmt;
 }
 
 stmt_t Parser::expressionStatemenmt() {
@@ -292,6 +306,8 @@ stmt_t Parser::Statement() {
     return whileStatement();
   } else if (Match({FOR})) {
     return forStatement();
+  } else if (Match({BREAK})) {
+    return breakStatement();
   }
   return expressionStatemenmt();
 }

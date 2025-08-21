@@ -1,0 +1,18 @@
+// CPP Lox Lang VM
+var a = 0;
+print "Case-01";
+while (a < 10) {
+    print a;
+    if (a == 4) {
+        break;
+    }
+    a = a + 1;
+}
+
+print "Case-02";
+for (a = 1; a < 20; a = a + 1) {
+    print a;
+    if (a == 5) {
+        break;
+    }
+}

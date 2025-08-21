@@ -187,8 +187,16 @@ void Interpreter::Visit(IfStmt &stmt) {
 
 void Interpreter::Visit(WhileStmt &stmt) {
   while (IsTruthy(Evaluate(stmt.condition))) {
-    Execute(stmt.body);
+    try {
+      Execute(stmt.body);
+    } catch (const RuntimeBreak &e) {
+      break;
+    }
   }
+}
+
+void Interpreter::Visit(BreakStmt &stmt) {
+  throw RuntimeBreak();
 }
 
 Value Interpreter::Evaluate(expr_t expr) { return expr->Accept(*this); }
@@ -201,8 +209,12 @@ void Interpreter::Execute(vector<stmt_t> statements, Enviroment *env) {
       statement->Accept(*this);
     }
   } catch (const RuntimeException &e) {
-    cout << "Catch Runtime exception in block" << endl;
+    cout << "Catch Runtime exception in block." << endl;
     runtimeError(e.token->line, e.message);
+  } catch (const RuntimeBreak &e) {
+    delete cur_env;
+    cur_env = prev_env;
+    throw RuntimeBreak();
   }
   delete cur_env;
   cur_env = prev_env;
@@ -221,7 +233,7 @@ void Interpreter::Execute() {
       statement->Accept(*this);
     }
   } catch (const RuntimeException &e) {
-    cout << "Catch Runtime exception" << endl;
+    cout << "Catch Runtime exception." << endl;
     runtimeError(e.token->line, e.message);
   }
 }

@@ -63,4 +63,10 @@ public:
   stmt_t body;
 };
 
+class BreakStmt : public Stmt {
+public:
+  BreakStmt() {}
+  virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
+};
+
 #endif
