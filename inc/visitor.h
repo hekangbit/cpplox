@@ -14,6 +14,7 @@ class VariableExpr;
 class LogicalExpr;
 class AssignExpr;
 class ExprStmt;
+class CallExpr;
 class PrintStmt;
 class BlockStmt;
 class VarStmt;
@@ -34,6 +35,7 @@ public:
   virtual Value Visit(LogicalExpr &expr) = 0;
   virtual Value Visit(VariableExpr &expr) = 0;
   virtual Value Visit(AssignExpr &expr) = 0;
+  virtual Value Visit(CallExpr &expr) = 0;
   virtual void Visit(ExprStmt &stmt) = 0;
   virtual void Visit(PrintStmt &stmt) = 0;
   virtual void Visit(BlockStmt &stmt) = 0;

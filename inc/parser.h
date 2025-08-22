@@ -30,6 +30,8 @@ public:
   ParserException Error(token_t token, string message);
   void Synchronize();
 
+  expr_t FinishCall(expr_t expr);
+
   expr_t Assignment();
   expr_t LogicalOr();
   expr_t LogicalAnd();
@@ -38,6 +40,7 @@ public:
   expr_t Term();
   expr_t Factor();
   expr_t Unary();
+  expr_t Call();
   expr_t Primary();
   expr_t Expression();
 

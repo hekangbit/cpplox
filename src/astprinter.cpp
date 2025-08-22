@@ -74,6 +74,10 @@ Value AstPrinter::Visit(AssignExpr &expr) {
   return Value();
 }
 
+Value AstPrinter::Visit(CallExpr &expr) {
+  return string("()");
+}
+
 void AstPrinter::Visit(ExprStmt &stmt) {}
 
 void AstPrinter::Visit(PrintStmt &stmt) {}

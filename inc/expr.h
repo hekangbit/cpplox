@@ -92,4 +92,13 @@ public:
   token_t name;
 };
 
+class CallExpr : public Expr {
+public:
+  CallExpr(expr_t callee, token_t paren, vector<expr_t> &arguments) : callee(callee), paren(paren), arguments(arguments) {}
+  Value Accept(Visitor &visitor) { return visitor.Visit(*this); }
+  expr_t callee;
+  token_t paren;
+  vector<expr_t> arguments;
+};
+
 #endif

@@ -20,6 +20,7 @@ public:
   virtual Value Visit(VariableExpr &expr);
   virtual Value Visit(LogicalExpr &expr);
   virtual Value Visit(AssignExpr &expr);
+  virtual Value Visit(CallExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);

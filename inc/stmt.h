@@ -5,7 +5,6 @@
 #include "expr.h"
 #include "token.h"
 #include "visitor.h"
-#include <vector>
 
 class Stmt {
 public:

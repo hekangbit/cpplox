@@ -165,7 +165,34 @@ expr_t Parser::Unary() {
     expr_t expr = Unary();
     return expr_t(new UnaryExpr(op, expr));
   }
-  return Primary();
+  return Call();
+}
+
+
+expr_t Parser::FinishCall(expr_t expr) {
+  vector<expr_t> arguments;
+  if (!Check(RIGHT_PAREN)) {
+    do {
+      if (arguments.size() >= 255) {
+        Error(Peek(), "Can't have more than 255 arguments");
+      }
+      arguments.push_back(Expression());
+    } while (Match({COMMA}));
+  }
+  Consume(RIGHT_PAREN, "Expect ')' for function call arguments.");
+  return expr_t(new CallExpr(expr, Previous(), arguments));
+}
+
+expr_t Parser::Call() {
+  expr_t expr = Primary();
+  while (true) {
+    if (Match({LEFT_PAREN})) {
+      expr = FinishCall(expr);
+    } else {
+      break;
+    }
+  }
+  return expr;
 }
 
 expr_t Parser::Primary() {

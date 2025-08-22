@@ -155,6 +155,11 @@ Value Interpreter::Visit(AssignExpr &expr) {
   return value;
 }
 
+Value Interpreter::Visit(CallExpr &expr) {
+  cout << "Run CallExpr" << endl;
+  return Value();
+}
+
 void Interpreter::Visit(ExprStmt &stmt) {
   Value value = Evaluate(stmt.expr);
 }
