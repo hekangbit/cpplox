@@ -1,29 +1,30 @@
 #include "interpreter.h"
+#include "loxcallable.h"
 
-void Enviroment::Define(token_t name, const Value value) {
-  values[name->lexeme] = value;
+void Enviroment::Define(string name, const Value value) {
+  values[name] = value;
 }
 
-void Enviroment::Assign(token_t name, const Value value) {
-  if (values.count(name->lexeme)) {
-    values[name->lexeme] = value;
+void Enviroment::Assign(token_t token, const Value value) {
+  if (values.count(token->lexeme)) {
+    values[token->lexeme] = value;
     return;
   }
   if (enclosing != nullptr) {
-    enclosing->Assign(name, value);
+    enclosing->Assign(token, value);
     return;
   }
-  throw RuntimeException(name, string("Undefined variable <") + name->lexeme + "> .");
+  throw RuntimeException(token, string("Undefined variable <") + token->lexeme + "> .");
 }
 
-Value Enviroment::Get(token_t name) {
-  if (values.count(name->lexeme)) {
-    return values[name->lexeme];
+Value Enviroment::Get(token_t token) {
+  if (values.count(token->lexeme)) {
+    return values[token->lexeme];
   }
   if (enclosing != nullptr) {
-    return enclosing->Get(name);
+    return enclosing->Get(token);
   }
-  throw RuntimeException(name, string("Undefined variable <") + name->lexeme + "> .");
+  throw RuntimeException(token, string("Undefined variable <") + token->lexeme + "> .");
 }
 
 bool Interpreter::IsTruthy(Value value) {
@@ -157,7 +158,24 @@ Value Interpreter::Visit(AssignExpr &expr) {
 
 Value Interpreter::Visit(CallExpr &expr) {
   cout << "Run CallExpr" << endl;
-  return Value();
+  Value callee = Evaluate(expr.callee);
+  vector<Value> arguments;
+
+  if (!callee.isLoxCallable()) {
+    throw RuntimeException(expr.paren, "Can only call functions and classes.");
+  }
+
+  for (auto arg : expr.arguments) {
+    arguments.push_back(Evaluate(arg));
+  }
+
+  lox_callable_t func = callee.getLoxCallable();
+
+  if (expr.arguments.size() != func->Arity()) {
+    throw RuntimeException(expr.paren,  "Expected " + to_string(func->Arity()) +
+      " arguments but got " + to_string(expr.arguments.size()) + ".");
+  }
+  return func->call(*this, arguments);
 }
 
 void Interpreter::Visit(ExprStmt &stmt) {
@@ -178,7 +196,7 @@ void Interpreter::Visit(VarStmt &stmt) {
   if (stmt.initializer != nullptr) {
     value = Evaluate(stmt.initializer);
   }
-  cur_env->Define(stmt.token, value);
+  cur_env->Define(stmt.token->lexeme, value);
 }
 
 void Interpreter::Visit(IfStmt &stmt) {

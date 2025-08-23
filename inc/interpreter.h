@@ -10,6 +10,7 @@
 #include <exception>
 #include <unordered_map>
 #include <vector>
+#include <loxcallable.h>
 
 class RuntimeException : public exception {
 public:
@@ -28,9 +29,9 @@ class Enviroment {
 public:
   Enviroment() : enclosing(nullptr) {}
   Enviroment(Enviroment *enclosing) : enclosing(enclosing) {}
-  void Define(token_t name, const Value value);
-  void Assign(token_t name, const Value value);
-  Value Get(token_t name);
+  void Define(string name, const Value value);
+  void Assign(token_t token, const Value value);
+  Value Get(token_t token);
 
 private:
   unordered_map<string, Value> values;
@@ -39,7 +40,17 @@ private:
 
 class Interpreter : public Visitor {
 public:
-  Interpreter(vector<stmt_t> statements) : statements(statements) {}
+  Interpreter(vector<stmt_t> statements) : statements(statements) {
+    global_env.Define("clock", make_shared<LoxCallable>(
+    0,
+    [](Interpreter &interpreter, const vector<Value>& arguments) -> Value {
+        auto now = std::chrono::system_clock::now();
+        return std::chrono::duration_cast<std::chrono::milliseconds>(
+            now.time_since_epoch()).count() / 1000.0;
+    },
+    "<native fn>"
+  ));
+  }
   ~Interpreter() {}
 
   bool IsTruthy(Value value);
