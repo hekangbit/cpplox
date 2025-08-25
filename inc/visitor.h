@@ -21,6 +21,7 @@ class VarStmt;
 class IfStmt;
 class WhileStmt;
 class BreakStmt;
+class FunctionStmt;
 
 class Visitor {
 public:
@@ -43,6 +44,7 @@ public:
   virtual void Visit(IfStmt &stmt) = 0;
   virtual void Visit(WhileStmt &stmt) = 0;
   virtual void Visit(BreakStmt &stmt) = 0;
+  virtual void Visit(FunctionStmt &stmt) = 0;
 };
 
 #endif

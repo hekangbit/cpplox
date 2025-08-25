@@ -28,6 +28,7 @@ public:
   virtual void Visit(IfStmt &stmt);
   virtual void Visit(WhileStmt &stmt);
   virtual void Visit(BreakStmt &stmt);
+  virtual void Visit(FunctionStmt &stmt);
 
 private:
 };

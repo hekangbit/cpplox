@@ -7,10 +7,12 @@
 #include "stmt.h"
 #include "value.h"
 #include "visitor.h"
+#include "loxcallable.h"
 #include <exception>
 #include <unordered_map>
 #include <vector>
-#include <loxcallable.h>
+
+class Interpreter;
 
 class RuntimeException : public exception {
 public:
@@ -36,6 +38,23 @@ public:
 private:
   unordered_map<string, Value> values;
   Enviroment *enclosing;
+};
+
+class LoxFunction : public LoxCallable {
+public:
+  LoxFunction(FunctionStmt &declaration) : declaration(declaration) {}
+
+  virtual int Arity() const {
+    return declaration.params.size();
+  }
+  virtual Value Call(Interpreter &interpreter, vector<Value> &arguments);
+  virtual string toString() const {
+    return "<fn " + declaration.name->lexeme + ">";
+  }
+
+private:
+  FunctionStmt declaration;
+
 };
 
 class Interpreter : public Visitor {
@@ -75,16 +94,18 @@ public:
   virtual void Visit(IfStmt &stmt);
   virtual void Visit(WhileStmt &stmt);
   virtual void Visit(BreakStmt &stmt);
+  virtual void Visit(FunctionStmt &stmt);
 
   Value Evaluate(expr_t expr);
   void Execute(vector<stmt_t> statements, Enviroment *env);
   void Execute(stmt_t stmt);
   void Execute();
 
+  Enviroment *cur_env;
+  Enviroment global_env;
+
 private:
   vector<stmt_t> statements;
-  Enviroment global_env;
-  Enviroment *cur_env;
 };
 
 #endif

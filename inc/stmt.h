@@ -68,4 +68,12 @@ public:
   virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
 };
 
+class FunctionStmt : public Stmt {
+public:
+  FunctionStmt(token_t name, vector<token_t> params, stmt_t body) : name(name), params(params), body(body) {}
+  virtual void Accept(Visitor &visitor) { visitor.Visit(*this); }
+  token_t name;
+  vector<token_t> params;
+  stmt_t body;
+};
 #endif

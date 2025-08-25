@@ -349,10 +349,32 @@ stmt_t Parser::VarDeclaration() {
   return stmt_t(new VarStmt(token, initializer));
 }
 
+stmt_t Parser::FuncDeclaration() {
+  token_t name = Consume(IDENTIFIER, "Expect a function name.");
+  Consume(LEFT_PAREN, "Expect '(' after func name.");
+  vector<token_t> params;
+  if (!Check(RIGHT_PAREN)) {
+    do {
+      if (params.size() > 255) {
+        Error(Peek(), "Can't have more than 255 arguments.");
+      }
+      token_t param = Consume(IDENTIFIER, "Expect parameter name.");
+      params.push_back(param);
+    } while(Match({COMMA}));
+  }
+  Consume(RIGHT_PAREN, "Expect ')' after parameters.");
+  Consume(LEFT_BRACE, "Expect '{' before function body.");
+  stmt_t body = blockStatement();
+
+  return stmt_t(new FunctionStmt(name, params, body));
+}
+
 stmt_t Parser::Declaration() {
   try {
     if (Match({VAR})) {
       return VarDeclaration();
+    } else if (Match({FUN})) {
+      return FuncDeclaration();
     }
     return Statement();
   } catch (const ParserException &e) {

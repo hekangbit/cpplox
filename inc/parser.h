@@ -53,6 +53,7 @@ public:
   stmt_t expressionStatemenmt();
   stmt_t Statement();
   stmt_t VarDeclaration();
+  stmt_t FuncDeclaration();
   stmt_t Declaration();
   vector<stmt_t> Parse();
 
