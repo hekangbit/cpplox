@@ -1,0 +1,6 @@
+// CPP Lox Lang VM
+fun test() {
+  print "hello";
+}
+
+print test;

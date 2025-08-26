@@ -1,8 +1,8 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-#include <variant>
 #include "common.h"
+#include <variant>
 
 class LoxCallable;
 using lox_callable_t = shared_ptr<LoxCallable>;
@@ -26,101 +26,17 @@ public:
   string getString() const { return get<string>(data); }
   lox_callable_t getLoxCallable() const { return get<lox_callable_t>(data); }
 
-  Value operator+(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return Value(getDouble() + other.getDouble());
-    }
-    if (isStr() && other.isStr()) {
-        return Value(getString() + other.getString());
-    }
-    if (isStr() && other.isDouble()) {
-        return Value(getString() + to_string(other.getDouble()));
-    }
-    return Value();
-  }
-
-  Value operator-(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return Value(getDouble() - other.getDouble());
-    }
-    return Value();
-  }
-
-  Value operator*(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return Value(getDouble() * other.getDouble());
-    }
-    return Value();
-  }
-
-  Value operator/(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return Value(getDouble() / other.getDouble());
-    }
-    return Value();
-  }
-
-  Value operator>(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return getDouble() > other.getDouble();
-    }
-    return Value();
-  }
-
-  Value operator>=(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return getDouble() >= other.getDouble();
-    }
-    return Value();
-  }
-
-  Value operator<(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return getDouble() < other.getDouble();
-    }
-    return Value();
-  }
-
-  Value operator<=(const Value& other) const {
-    if (isDouble() && other.isDouble()) {
-        return getDouble() <= other.getDouble();
-    }
-    return Value();
-  }
-
-  Value operator==(const Value& other) const {
-    if (isNil() && other.isNil()) {
-      return true;
-    }
-    if (isNil()) {
-      return false;
-    }
-    if (isDouble() && other.isDouble()) {
-        return getDouble() == other.getDouble();
-    }
-    if (isStr() && other.isStr()) {
-      return getString() == other.getString();
-    }
-    return false;
-  }
-
-  Value operator!=(const Value& other) const {
-    Value value = operator==(other);
-    return !(value.getBool());
-  }
-
-  string toString() const {
-    if (isDouble()) {
-      return to_string(getDouble());
-    }
-    if (isBool()) {
-      return getBool() ? "true" : "false";
-    }
-    if (isStr()) {
-      return getString();
-    }
-    return "nil";
-  }
+  Value operator+(const Value& other) const;
+  Value operator-(const Value& other) const;
+  Value operator*(const Value& other) const;
+  Value operator/(const Value& other) const;
+  Value operator>(const Value& other) const;
+  Value operator>=(const Value& other) const;
+  Value operator<(const Value& other) const;
+  Value operator<=(const Value& other) const;
+  Value operator==(const Value& other) const;
+  Value operator!=(const Value& other) const;
+  string toString() const;
 
   friend std::ostream& operator<<(std::ostream& os, const Value& val) {
     if (val.isStr()) return os << val.getString();
