@@ -31,7 +31,7 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
   unique_ptr<Enviroment> env = make_unique<Enviroment>(&(interpreter.global_env));
 
   for (int i = 0; i < declaration.params.size(); i++) {
-    interpreter.cur_env->Define(declaration.params[i]->lexeme, arguments[i]);
+    env->Define(declaration.params[i]->lexeme, arguments[i]);
   }
   auto body = dynamic_pointer_cast<BlockStmt>(declaration.body);
   if (!body) {
@@ -201,7 +201,8 @@ void Interpreter::Visit(PrintStmt &stmt) {
 }
 
 void Interpreter::Visit(BlockStmt &stmt) {
-  Execute(stmt.statements, cur_env);
+  auto env = make_unique<Enviroment>(cur_env);
+  Execute(stmt.statements, env.get());
 }
 
 void Interpreter::Visit(VarStmt &stmt) {
@@ -243,8 +244,8 @@ void Interpreter::Visit(FunctionStmt &stmt) {
 Value Interpreter::Evaluate(expr_t expr) { return expr->Accept(*this); }
 
 void Interpreter::Execute(vector<stmt_t> statements, Enviroment *env) {
-  Enviroment *prev_env = env;
-  cur_env = new Enviroment(env);
+  Enviroment *prev_env = cur_env;
+  cur_env = env;
   try {
     for (auto &statement : statements) {
       statement->Accept(*this);
@@ -253,11 +254,9 @@ void Interpreter::Execute(vector<stmt_t> statements, Enviroment *env) {
     cout << "Catch Runtime exception in block." << endl;
     runtimeError(e.token->line, e.message);
   } catch (const RuntimeBreak &e) {
-    delete cur_env;
     cur_env = prev_env;
     throw RuntimeBreak();
   }
-  delete cur_env;
   cur_env = prev_env;
 }
 
