@@ -27,17 +27,17 @@ class RuntimeBreak : public exception {
 public:
 };
 
-class Enviroment {
+class Environment {
 public:
-  Enviroment() : enclosing(nullptr) {}
-  Enviroment(Enviroment *enclosing) : enclosing(enclosing) {}
+  Environment() : enclosing(nullptr) {}
+  Environment(Environment *enclosing) : enclosing(enclosing) {}
   void Define(string name, const Value value);
   void Assign(token_t token, const Value value);
   Value Get(token_t token);
 
 private:
   unordered_map<string, Value> values;
-  Enviroment *enclosing;
+  Environment *enclosing;
 };
 
 class LoxFunction : public LoxCallable {
@@ -97,12 +97,12 @@ public:
   virtual void Visit(FunctionStmt &stmt);
 
   Value Evaluate(expr_t expr);
-  void Execute(vector<stmt_t> statements, Enviroment *env);
+  void Execute(vector<stmt_t> statements, Environment *env);
   void Execute(stmt_t stmt);
   void Execute();
 
-  Enviroment *cur_env;
-  Enviroment global_env;
+  Environment *cur_env;
+  Environment global_env;
 
 private:
   vector<stmt_t> statements;

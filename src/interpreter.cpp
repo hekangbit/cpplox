@@ -1,11 +1,11 @@
 #include "interpreter.h"
 #include "loxcallable.h"
 
-void Enviroment::Define(string name, const Value value) {
+void Environment::Define(string name, const Value value) {
   values[name] = value;
 }
 
-void Enviroment::Assign(token_t token, const Value value) {
+void Environment::Assign(token_t token, const Value value) {
   if (values.count(token->lexeme)) {
     values[token->lexeme] = value;
     return;
@@ -17,7 +17,7 @@ void Enviroment::Assign(token_t token, const Value value) {
   throw RuntimeException(token, string("Undefined variable <") + token->lexeme + "> .");
 }
 
-Value Enviroment::Get(token_t token) {
+Value Environment::Get(token_t token) {
   if (values.count(token->lexeme)) {
     return values[token->lexeme];
   }
@@ -28,7 +28,7 @@ Value Enviroment::Get(token_t token) {
 }
 
 Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
-  unique_ptr<Enviroment> env = make_unique<Enviroment>(&(interpreter.global_env));
+  unique_ptr<Environment> env = make_unique<Environment>(&(interpreter.global_env));
 
   for (int i = 0; i < declaration.params.size(); i++) {
     env->Define(declaration.params[i]->lexeme, arguments[i]);
@@ -201,7 +201,7 @@ void Interpreter::Visit(PrintStmt &stmt) {
 }
 
 void Interpreter::Visit(BlockStmt &stmt) {
-  auto env = make_unique<Enviroment>(cur_env);
+  auto env = make_unique<Environment>(cur_env);
   Execute(stmt.statements, env.get());
 }
 
@@ -243,8 +243,8 @@ void Interpreter::Visit(FunctionStmt &stmt) {
 
 Value Interpreter::Evaluate(expr_t expr) { return expr->Accept(*this); }
 
-void Interpreter::Execute(vector<stmt_t> statements, Enviroment *env) {
-  Enviroment *prev_env = cur_env;
+void Interpreter::Execute(vector<stmt_t> statements, Environment *env) {
+  Environment *prev_env = cur_env;
   cur_env = env;
   try {
     for (auto &statement : statements) {
