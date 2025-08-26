@@ -4,10 +4,10 @@
 #include "common.h"
 #include "error.h"
 #include "expr.h"
+#include "loxcallable.h"
 #include "stmt.h"
 #include "value.h"
 #include "visitor.h"
-#include "loxcallable.h"
 #include <exception>
 #include <unordered_map>
 #include <vector>
@@ -18,7 +18,9 @@ class RuntimeException : public exception {
 public:
   RuntimeException(token_t token, string message)
       : token(token), message(message) {}
-  const char *what() const throw() { return message.c_str(); }
+  const char *what() const throw() {
+    return message.c_str();
+  }
   token_t token;
   string message;
 };
@@ -54,27 +56,31 @@ public:
 
 private:
   FunctionStmt declaration;
-
 };
 
 class Interpreter : public Visitor {
 public:
   Interpreter(vector<stmt_t> statements) : statements(statements) {
-    global_env.Define("clock", make_shared<LoxCallable>(
-    0,
-    [](Interpreter &interpreter, const vector<Value>& arguments) -> Value {
-        auto now = std::chrono::system_clock::now();
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            now.time_since_epoch()).count() / 1000.0;
-    },
-    "<native fn>"
-  ));
+    global_env.Define(
+        "clock",
+        make_shared<LoxCallable>(
+            0,
+            [](Interpreter &interpreter,
+               const vector<Value> &arguments) -> Value {
+              auto now = std::chrono::system_clock::now();
+              return std::chrono::duration_cast<std::chrono::milliseconds>(
+                         now.time_since_epoch())
+                         .count() /
+                     1000.0;
+            },
+            "<native fn>"));
   }
   ~Interpreter() {}
 
   bool IsTruthy(Value value);
   void CheckNumOperand(const token_t op, const Value &value);
-  void CheckNumOperands(const token_t op, const Value &left, const Value &right);
+  void CheckNumOperands(const token_t op, const Value &left,
+                        const Value &right);
 
   virtual Value Visit(NumberLiteralExpr &expr);
   virtual Value Visit(StringLiteralExpr &expr);

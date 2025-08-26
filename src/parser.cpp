@@ -1,6 +1,8 @@
 #include "parser.h"
 
-bool Parser::IsAtEnd() { return current >= tokens.size(); }
+bool Parser::IsAtEnd() {
+  return current >= tokens.size();
+}
 
 bool Parser::Check(TokenType type) {
   if (IsAtEnd()) {
@@ -68,17 +70,17 @@ void Parser::Synchronize() {
       return;
     }
     switch (curr_token->type) {
-      case VAR:
-      case IF:
-      case FOR:
-      case WHILE:
-      case FUN:
-      case CLASS:
-      case RETURN:
-      case PRINT:
-        return;
-      default:
-        break;
+    case VAR:
+    case IF:
+    case FOR:
+    case WHILE:
+    case FUN:
+    case CLASS:
+    case RETURN:
+    case PRINT:
+      return;
+    default:
+      break;
     }
     Advance();
   }
@@ -168,7 +170,6 @@ expr_t Parser::Unary() {
   return Call();
 }
 
-
 expr_t Parser::FinishCall(expr_t expr) {
   vector<expr_t> arguments;
   if (!Check(RIGHT_PAREN)) {
@@ -224,7 +225,9 @@ expr_t Parser::Primary() {
   return nullptr;
 }
 
-expr_t Parser::Expression() { return Assignment(); }
+expr_t Parser::Expression() {
+  return Assignment();
+}
 
 stmt_t Parser::printStatement() {
   token_t t = Peek();
@@ -294,7 +297,8 @@ stmt_t Parser::forStatement() {
 
   stmt_t body = Statement();
   if (increment) {
-    body = stmt_t(new BlockStmt(vector<stmt_t>{body, stmt_t(new ExprStmt(increment))}));
+    body = stmt_t(
+        new BlockStmt(vector<stmt_t>{body, stmt_t(new ExprStmt(increment))}));
   }
   if (condition == nullptr) {
     condition = expr_t(new BoolLiteralExpr(true));
@@ -360,7 +364,7 @@ stmt_t Parser::FuncDeclaration() {
       }
       token_t param = Consume(IDENTIFIER, "Expect parameter name.");
       params.push_back(param);
-    } while(Match({COMMA}));
+    } while (Match({COMMA}));
   }
   Consume(RIGHT_PAREN, "Expect ')' after parameters.");
   Consume(LEFT_BRACE, "Expect '{' before function body.");

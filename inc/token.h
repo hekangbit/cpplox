@@ -68,6 +68,6 @@ public:
   int32_t line;
 };
 
-using token_t = Token*;
+using token_t = Token *;
 
 #endif

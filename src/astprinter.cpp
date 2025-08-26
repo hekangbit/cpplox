@@ -63,7 +63,9 @@ Value AstPrinter::Visit(GroupingExpr &expr) {
   return res;
 }
 
-Value AstPrinter::Visit(VariableExpr &expr) { return expr.token->lexeme; }
+Value AstPrinter::Visit(VariableExpr &expr) {
+  return expr.token->lexeme;
+}
 
 Value AstPrinter::Visit(LogicalExpr &expr) {
   vector<expr_t> exprs{expr.left, expr.right};

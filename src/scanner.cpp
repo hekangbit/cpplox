@@ -5,17 +5,24 @@ map<string, TokenType> Scanner::keywords = {
     {"and", AND},     {"or", OR},      {"true", TRUE},   {"false", FALSE},
     {"if", IF},       {"else", _ELSE}, {"for", FOR},     {"while", WHILE},
     {"var", VAR},     {"this", _THIS}, {"super", SUPER}, {"return", RETURN},
-    {"print", PRINT}, {"fun", FUN},    {"class", CLASS}, {"break", BREAK}, {"nil", NIL}};
+    {"print", PRINT}, {"fun", FUN},    {"class", CLASS}, {"break", BREAK},
+    {"nil", NIL}};
 
-bool Scanner::IsAtEnd() const { return current >= source.size(); }
+bool Scanner::IsAtEnd() const {
+  return current >= source.size();
+}
 
-bool Scanner::IsDigit(char c) const { return c >= '0' && c <= '9'; }
+bool Scanner::IsDigit(char c) const {
+  return c >= '0' && c <= '9';
+}
 
 bool Scanner::IsAlpha(char c) const {
   return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'));
 }
 
-bool Scanner::IsAlphaNumeric(char c) const { return IsAlpha(c) || IsDigit(c); }
+bool Scanner::IsAlphaNumeric(char c) const {
+  return IsAlpha(c) || IsDigit(c);
+}
 
 bool Scanner::Match(char c) {
   if (IsAtEnd()) {

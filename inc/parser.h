@@ -7,12 +7,14 @@
 #include "stmt.h"
 #include "token.h"
 #include <exception>
-#include <vector>
 #include <list>
+#include <vector>
 
 class ParserException : public exception {
 public:
-  const char *what() const throw() { return "ParserException"; }
+  const char *what() const throw() {
+    return "ParserException";
+  }
 };
 
 class Parser {

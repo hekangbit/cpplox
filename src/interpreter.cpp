@@ -14,7 +14,8 @@ void Environment::Assign(token_t token, const Value value) {
     enclosing->Assign(token, value);
     return;
   }
-  throw RuntimeException(token, string("Undefined variable <") + token->lexeme + "> .");
+  throw RuntimeException(token, string("Undefined variable <") + token->lexeme +
+                                    "> .");
 }
 
 Value Environment::Get(token_t token) {
@@ -24,18 +25,21 @@ Value Environment::Get(token_t token) {
   if (enclosing != nullptr) {
     return enclosing->Get(token);
   }
-  throw RuntimeException(token, string("Undefined variable <") + token->lexeme + "> .");
+  throw RuntimeException(token, string("Undefined variable <") + token->lexeme +
+                                    "> .");
 }
 
 Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
-  unique_ptr<Environment> env = make_unique<Environment>(&(interpreter.global_env));
+  unique_ptr<Environment> env =
+      make_unique<Environment>(&(interpreter.global_env));
 
   for (int i = 0; i < declaration.params.size(); i++) {
     env->Define(declaration.params[i]->lexeme, arguments[i]);
   }
   auto body = dynamic_pointer_cast<BlockStmt>(declaration.body);
   if (!body) {
-    throw RuntimeException(declaration.name,  "Expect block stmt body for function.");
+    throw RuntimeException(declaration.name,
+                           "Expect block stmt body for function.");
   }
   interpreter.Execute(body->statements, env.get());
   return Value();
@@ -61,7 +65,8 @@ void Interpreter::CheckNumOperand(const token_t op, const Value &value) {
   throw RuntimeException(op, tmp);
 }
 
-void Interpreter::CheckNumOperands(const token_t op, const Value &left, const Value &right) {
+void Interpreter::CheckNumOperands(const token_t op, const Value &left,
+                                   const Value &right) {
   if (left.isDouble() && right.isDouble()) {
     return;
   }
@@ -144,7 +149,9 @@ Value Interpreter::Visit(GroupingExpr &expr) {
   return Evaluate(expr.expr);
 }
 
-Value Interpreter::Visit(NullLiteralExpr &expr) { return Value(); }
+Value Interpreter::Visit(NullLiteralExpr &expr) {
+  return Value();
+}
 
 Value Interpreter::Visit(BoolLiteralExpr &expr) {
   return Value(expr.val);
@@ -185,8 +192,10 @@ Value Interpreter::Visit(CallExpr &expr) {
   lox_callable_t func = callee.getLoxCallable();
 
   if (expr.arguments.size() != func->Arity()) {
-    throw RuntimeException(expr.paren,  "Expected " + to_string(func->Arity()) +
-      " arguments but got " + to_string(expr.arguments.size()) + ".");
+    throw RuntimeException(expr.paren, "Expected " + to_string(func->Arity()) +
+                                           " arguments but got " +
+                                           to_string(expr.arguments.size()) +
+                                           ".");
   }
   return func->Call(*this, arguments);
 }
@@ -241,7 +250,9 @@ void Interpreter::Visit(FunctionStmt &stmt) {
   cur_env->Define(stmt.name->lexeme, function);
 }
 
-Value Interpreter::Evaluate(expr_t expr) { return expr->Accept(*this); }
+Value Interpreter::Evaluate(expr_t expr) {
+  return expr->Accept(*this);
+}
 
 void Interpreter::Execute(vector<stmt_t> statements, Environment *env) {
   Environment *prev_env = cur_env;
