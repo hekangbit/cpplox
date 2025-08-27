@@ -51,7 +51,7 @@ private:
 
 class LoxFunction : public LoxCallable {
 public:
-  LoxFunction(FunctionStmt &declaration) : declaration(declaration) {}
+  LoxFunction(FunctionStmt &declaration, Environment *env) : declaration(declaration), closure(*env) {}
 
   virtual int Arity() const {
     return declaration.params.size();
@@ -63,6 +63,7 @@ public:
 
 private:
   FunctionStmt declaration;
+  Environment closure;
 };
 
 class Interpreter : public Visitor {

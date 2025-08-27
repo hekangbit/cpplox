@@ -31,7 +31,7 @@ Value Environment::Get(token_t token) {
 
 Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
   unique_ptr<Environment> env =
-      make_unique<Environment>(&(interpreter.global_env));
+      make_unique<Environment>(&closure);
 
   for (int i = 0; i < declaration.params.size(); i++) {
     env->Define(declaration.params[i]->lexeme, arguments[i]);
@@ -251,7 +251,7 @@ void Interpreter::Visit(BreakStmt &stmt) {
 }
 
 void Interpreter::Visit(FunctionStmt &stmt) {
-  shared_ptr<LoxCallable> function(new LoxFunction(stmt));
+  shared_ptr<LoxCallable> function(new LoxFunction(stmt, cur_env));
   cur_env->Define(stmt.name->lexeme, function);
 }
 
