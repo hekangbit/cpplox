@@ -29,6 +29,13 @@ class RuntimeBreak : public exception {
 public:
 };
 
+class RuntimeReturn : public exception {
+public:
+  RuntimeReturn(Value val) : val(val) {}
+  Value val;
+};
+
+
 class Environment {
 public:
   Environment() : enclosing(nullptr) {}
@@ -101,6 +108,7 @@ public:
   virtual void Visit(WhileStmt &stmt);
   virtual void Visit(BreakStmt &stmt);
   virtual void Visit(FunctionStmt &stmt);
+  virtual void Visit(ReturnStmt &stmt);
 
   Value Evaluate(expr_t expr);
   void Execute(vector<stmt_t> statements, Environment *env);

@@ -326,6 +326,16 @@ stmt_t Parser::expressionStatemenmt() {
   return stmt;
 }
 
+stmt_t Parser::returnStatement() {
+  token_t token = Previous();
+  expr_t expr;
+  if (!Check(SEMICOLON)) {
+    expr = Expression();
+  }
+  Consume(SEMICOLON, "Expect ';' after return value.");
+  return stmt_t(new ReturnStmt(token, expr));
+}
+
 stmt_t Parser::Statement() {
   if (Match({PRINT})) {
     return printStatement();
@@ -339,6 +349,8 @@ stmt_t Parser::Statement() {
     return forStatement();
   } else if (Match({BREAK})) {
     return breakStatement();
+  } else if (Match({RETURN})) {
+    return returnStatement();
   }
   return expressionStatemenmt();
 }

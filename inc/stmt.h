@@ -95,4 +95,15 @@ public:
   vector<token_t> params;
   stmt_t body;
 };
+
+class ReturnStmt : public Stmt {
+public:
+  ReturnStmt(token_t token, expr_t expr) : token(token), expr(expr) {}
+  virtual void Accept(Visitor &visitor) {
+    visitor.Visit(*this);
+  }
+  token_t token;
+  expr_t expr;
+};
+
 #endif

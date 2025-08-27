@@ -41,7 +41,12 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
     throw RuntimeException(declaration.name,
                            "Expect block stmt body for function.");
   }
-  interpreter.Execute(body->statements, env.get());
+  try {
+    interpreter.Execute(body->statements, env.get());
+  } catch (const RuntimeReturn &e) {
+    return e.val;
+  }
+
   return Value();
 }
 
@@ -250,6 +255,14 @@ void Interpreter::Visit(FunctionStmt &stmt) {
   cur_env->Define(stmt.name->lexeme, function);
 }
 
+void Interpreter::Visit(ReturnStmt &stmt) {
+  Value val;
+  if (stmt.expr) {
+    val = Evaluate(stmt.expr);
+  }
+  throw RuntimeReturn(val);
+}
+
 Value Interpreter::Evaluate(expr_t expr) {
   return expr->Accept(*this);
 }
@@ -267,7 +280,11 @@ void Interpreter::Execute(vector<stmt_t> statements, Environment *env) {
   } catch (const RuntimeBreak &e) {
     cur_env = prev_env;
     throw RuntimeBreak();
+  } catch (const RuntimeReturn &e) {
+    cur_env = prev_env;
+    throw RuntimeReturn(e);
   }
+
   cur_env = prev_env;
 }
 

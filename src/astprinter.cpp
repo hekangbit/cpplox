@@ -95,3 +95,5 @@ void AstPrinter::Visit(WhileStmt &stmt) {}
 void AstPrinter::Visit(BreakStmt &stmt) {}
 
 void AstPrinter::Visit(FunctionStmt &stmt) {}
+
+void AstPrinter::Visit(ReturnStmt &stmt) {}

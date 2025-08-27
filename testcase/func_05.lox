@@ -1,0 +1,7 @@
+// CPP Lox Lang VM
+fun add(a, b) {
+  print "add " + a + " + " + b;
+  return a + b;
+}
+
+print add(5, 6);
