@@ -35,7 +35,6 @@ public:
   Value val;
 };
 
-
 class Environment {
 public:
   using env_t = shared_ptr<Environment>;
@@ -54,7 +53,8 @@ using environment_t = Environment::env_t;
 
 class LoxFunction : public LoxCallable {
 public:
-  LoxFunction(FunctionStmt &declaration, environment_t env) : declaration(declaration), closure(env) {}
+  LoxFunction(FunctionStmt &declaration, environment_t env)
+      : declaration(declaration), closure(env) {}
 
   virtual int Arity() const {
     return declaration.params.size();
@@ -73,22 +73,7 @@ private:
 
 class Interpreter : public Visitor {
 public:
-  Interpreter(vector<stmt_t> statements) : statements(statements) {
-    global_env = make_shared<Environment>();
-    global_env->Define(
-        "clock",
-        make_shared<LoxCallable>(
-            0,
-            [](Interpreter &interpreter,
-               const vector<Value> &arguments) -> Value {
-              auto now = std::chrono::system_clock::now();
-              return std::chrono::duration_cast<std::chrono::milliseconds>(
-                         now.time_since_epoch())
-                         .count() /
-                     1000.0;
-            },
-            "<native fn>"));
-  }
+  Interpreter(vector<stmt_t> statements);
   ~Interpreter() {}
 
   bool IsTruthy(Value value);

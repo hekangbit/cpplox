@@ -49,6 +49,23 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
   return Value();
 }
 
+Interpreter::Interpreter(vector<stmt_t> statements) : statements(statements) {
+  global_env = make_shared<Environment>();
+  global_env->Define(
+      "clock",
+      make_shared<LoxCallable>(
+          0,
+          [](Interpreter &interpreter,
+             const vector<Value> &arguments) -> Value {
+            auto now = std::chrono::system_clock::now();
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                       now.time_since_epoch())
+                       .count() /
+                   1000.0;
+          },
+          "<native fn>"));
+}
+
 bool Interpreter::IsTruthy(Value value) {
   if (value.isNil()) {
     return false;
