@@ -19,6 +19,7 @@ public:
   virtual string toString() const {
     return name_;
   }
+  virtual ~LoxCallable() {}
 
 private:
   int arity;

@@ -30,8 +30,7 @@ Value Environment::Get(token_t token) {
 }
 
 Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
-  unique_ptr<Environment> env =
-      make_unique<Environment>(&closure);
+  auto env = make_shared<Environment>(closure);
 
   for (int i = 0; i < declaration.params.size(); i++) {
     env->Define(declaration.params[i]->lexeme, arguments[i]);
@@ -42,7 +41,7 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
                            "Expect block stmt body for function.");
   }
   try {
-    interpreter.Execute(body->statements, env.get());
+    interpreter.Execute(body->statements, env);
   } catch (const RuntimeReturn &e) {
     return e.val;
   }
@@ -215,8 +214,8 @@ void Interpreter::Visit(PrintStmt &stmt) {
 }
 
 void Interpreter::Visit(BlockStmt &stmt) {
-  auto env = make_unique<Environment>(cur_env);
-  Execute(stmt.statements, env.get());
+  auto env = make_shared<Environment>(cur_env);
+  Execute(stmt.statements, env);
 }
 
 void Interpreter::Visit(VarStmt &stmt) {
@@ -267,8 +266,8 @@ Value Interpreter::Evaluate(expr_t expr) {
   return expr->Accept(*this);
 }
 
-void Interpreter::Execute(vector<stmt_t> statements, Environment *env) {
-  Environment *prev_env = cur_env;
+void Interpreter::Execute(vector<stmt_t> statements, environment_t env) {
+  environment_t prev_env = cur_env;
   cur_env = env;
   try {
     for (auto &statement : statements) {
@@ -295,7 +294,7 @@ void Interpreter::Execute(stmt_t stmt) {
 }
 
 void Interpreter::Execute() {
-  cur_env = &global_env;
+  cur_env = global_env;
   try {
     for (auto &statement : statements) {
       statement->Accept(*this);

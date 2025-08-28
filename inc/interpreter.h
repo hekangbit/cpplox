@@ -38,20 +38,23 @@ public:
 
 class Environment {
 public:
+  using env_t = shared_ptr<Environment>;
   Environment() : enclosing(nullptr) {}
-  Environment(Environment *enclosing) : enclosing(enclosing) {}
+  Environment(env_t enclosing) : enclosing(enclosing) {}
   void Define(string name, const Value value);
   void Assign(token_t token, const Value value);
   Value Get(token_t token);
 
 private:
   unordered_map<string, Value> values;
-  Environment *enclosing;
+  env_t enclosing;
 };
+
+using environment_t = Environment::env_t;
 
 class LoxFunction : public LoxCallable {
 public:
-  LoxFunction(FunctionStmt &declaration, Environment *env) : declaration(declaration), closure(*env) {}
+  LoxFunction(FunctionStmt &declaration, environment_t env) : declaration(declaration), closure(env) {}
 
   virtual int Arity() const {
     return declaration.params.size();
@@ -61,15 +64,18 @@ public:
     return "<fn " + declaration.name->lexeme + ">";
   }
 
+  virtual ~LoxFunction() {}
+
 private:
   FunctionStmt declaration;
-  Environment closure;
+  environment_t closure;
 };
 
 class Interpreter : public Visitor {
 public:
   Interpreter(vector<stmt_t> statements) : statements(statements) {
-    global_env.Define(
+    global_env = make_shared<Environment>();
+    global_env->Define(
         "clock",
         make_shared<LoxCallable>(
             0,
@@ -112,12 +118,12 @@ public:
   virtual void Visit(ReturnStmt &stmt);
 
   Value Evaluate(expr_t expr);
-  void Execute(vector<stmt_t> statements, Environment *env);
+  void Execute(vector<stmt_t> statements, environment_t env);
   void Execute(stmt_t stmt);
   void Execute();
 
-  Environment *cur_env;
-  Environment global_env;
+  environment_t cur_env;
+  environment_t global_env;
 
 private:
   vector<stmt_t> statements;
