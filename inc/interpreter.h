@@ -2,7 +2,7 @@
 #define INTERPRETER_H
 
 #include "common.h"
-#include "error.h"
+#include "loxerror.h"
 #include "expr.h"
 #include "loxcallable.h"
 #include "stmt.h"
@@ -42,7 +42,9 @@ public:
   Environment(env_t enclosing) : enclosing(enclosing) {}
   void Define(string name, const Value value);
   void Assign(token_t token, const Value value);
+  void AssignAt(int depth, token_t token, const Value value);
   Value Get(token_t token);
+  Value GetAt(int depth, string name);
 
 private:
   unordered_map<string, Value> values;
@@ -73,9 +75,10 @@ private:
 
 class Interpreter : public Visitor {
 public:
-  Interpreter(vector<stmt_t> statements);
+  Interpreter();
   ~Interpreter() {}
 
+  Value LookupVariable(token_t name, Expr *expr);
   bool IsTruthy(Value value);
   void CheckNumOperand(const token_t op, const Value &value);
   void CheckNumOperands(const token_t op, const Value &left,
@@ -105,13 +108,13 @@ public:
   Value Evaluate(expr_t expr);
   void Execute(vector<stmt_t> statements, environment_t env);
   void Execute(stmt_t stmt);
-  void Execute();
+  void Interpret(vector<stmt_t> &statements);
+
+  void Resolve(Expr *expr, int depth);
 
   environment_t cur_env;
   environment_t global_env;
-
-private:
-  vector<stmt_t> statements;
+  unordered_map<Expr*, int> locals;
 };
 
 #endif

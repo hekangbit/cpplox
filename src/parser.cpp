@@ -54,10 +54,10 @@ token_t Parser::Peek() {
 ParserException Parser::Error(token_t token, string message) {
   if (token == nullptr) {
     message = "at the end, " + message;
-    error(tokens.size() ? tokens.back().line : 0, message);
+    LoxError(tokens.size() ? tokens.back().line : 0, message);
   } else {
     message = "found token <" + token->lexeme + ">, " + message;
-    error(token->line, message);
+    LoxError(token->line, message);
   }
   return ParserException();
 }

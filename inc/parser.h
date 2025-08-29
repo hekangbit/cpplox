@@ -2,7 +2,7 @@
 #define PARSER_H
 
 #include "common.h"
-#include "error.h"
+#include "loxerror.h"
 #include "expr.h"
 #include "stmt.h"
 #include "token.h"

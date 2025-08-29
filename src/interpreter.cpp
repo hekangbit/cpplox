@@ -15,7 +15,19 @@ void Environment::Assign(token_t token, const Value value) {
     return;
   }
   throw RuntimeException(token, string("Undefined variable <") + token->lexeme +
-                                    "> .");
+                                    "> in Assign Env.");
+}
+
+void Environment::AssignAt(int depth, token_t name, const Value value) {
+  if (depth == 0) {
+    Assign(name, value);
+    return;
+  }
+  env_t env(this);
+  while (depth--) {
+    env = env->enclosing;
+  }
+  env->Assign(name, value);
 }
 
 Value Environment::Get(token_t token) {
@@ -26,7 +38,18 @@ Value Environment::Get(token_t token) {
     return enclosing->Get(token);
   }
   throw RuntimeException(token, string("Undefined variable <") + token->lexeme +
-                                    "> .");
+                                    "> in Get Env.");
+}
+
+Value Environment::GetAt(int depth, string name) {
+  if (depth == 0) {
+    return values[name];
+  }
+  env_t env(this);
+  while (depth--) {
+    env = env->enclosing;
+  }
+  return env->values[name];
 }
 
 Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
@@ -49,7 +72,7 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
   return Value();
 }
 
-Interpreter::Interpreter(vector<stmt_t> statements) : statements(statements) {
+Interpreter::Interpreter() {
   global_env = make_shared<Environment>();
   global_env->Define(
       "clock",
@@ -64,6 +87,14 @@ Interpreter::Interpreter(vector<stmt_t> statements) : statements(statements) {
                    1000.0;
           },
           "<native fn>"));
+}
+
+Value Interpreter::LookupVariable(token_t name, Expr *expr) {
+  if (locals.count(expr)) {
+    int depth = locals[expr];
+    return cur_env->GetAt(depth, name->lexeme);
+  }
+  return global_env->Get(name);
 }
 
 bool Interpreter::IsTruthy(Value value) {
@@ -179,7 +210,7 @@ Value Interpreter::Visit(BoolLiteralExpr &expr) {
 }
 
 Value Interpreter::Visit(VariableExpr &expr) {
-  return cur_env->Get(expr.token);
+  return LookupVariable(expr.token, &expr);
 }
 
 Value Interpreter::Visit(LogicalExpr &expr) {
@@ -194,7 +225,14 @@ Value Interpreter::Visit(LogicalExpr &expr) {
 
 Value Interpreter::Visit(AssignExpr &expr) {
   Value value = Evaluate(expr.value);
-  cur_env->Assign(expr.name, value);
+
+  if (locals.count(&expr)) {
+    int depth = locals[&expr];
+    cur_env->AssignAt(depth, expr.name, value);
+  } else {
+    global_env->Assign(expr.name, value);
+  }
+
   return value;
 }
 
@@ -292,7 +330,7 @@ void Interpreter::Execute(vector<stmt_t> statements, environment_t env) {
     }
   } catch (const RuntimeException &e) {
     cout << "Catch Runtime exception in block." << endl;
-    runtimeError(e.token->line, e.message);
+    LoxRuntimeError(e.token->line, e.message);
   } catch (const RuntimeBreak &e) {
     cur_env = prev_env;
     throw RuntimeBreak();
@@ -310,7 +348,7 @@ void Interpreter::Execute(stmt_t stmt) {
   }
 }
 
-void Interpreter::Execute() {
+void Interpreter::Interpret(vector<stmt_t> &statements) {
   cur_env = global_env;
   try {
     for (auto &statement : statements) {
@@ -318,6 +356,10 @@ void Interpreter::Execute() {
     }
   } catch (const RuntimeException &e) {
     cout << "Catch Runtime exception." << endl;
-    runtimeError(e.token->line, e.message);
+    LoxRuntimeError(e.token->line, e.message);
   }
+}
+
+void Interpreter::Resolve(Expr *expr, int depth) {
+  locals[expr] = depth;
 }

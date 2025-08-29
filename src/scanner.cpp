@@ -1,5 +1,5 @@
 #include "scanner.h"
-#include "error.h"
+#include "loxerror.h"
 
 map<string, TokenType> Scanner::keywords = {
     {"and", AND},     {"or", OR},      {"true", TRUE},   {"false", FALSE},
@@ -79,7 +79,7 @@ void Scanner::ScanString() {
     Advance();
   }
   if (IsAtEnd()) {
-    error(line, "Invalid literal string");
+    LoxError(line, "Invalid literal string");
     return;
   }
   Advance();
@@ -183,7 +183,7 @@ void Scanner::ScanToken() {
     } else if (IsAlpha(c)) {
       ScanIdentifier();
     } else {
-      error(line, "Unexpected char.");
+      LoxError(line, "Unexpected char.");
     }
     break;
   }

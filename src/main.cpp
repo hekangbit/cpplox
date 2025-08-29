@@ -1,7 +1,8 @@
 #include "astprinter.h"
 #include "common.h"
-#include "error.h"
+#include "loxerror.h"
 #include "expr.h"
+#include "resolver.h"
 #include "interpreter.h"
 #include "parser.h"
 #include "scanner.h"
@@ -11,10 +12,19 @@ void run(string &str) {
   scanner.ScanTokens();
 
   Parser parser(scanner.GetTokens());
+  if (hadError) {
+    return;
+  }
+
   vector<stmt_t> statements = parser.Parse();
 
-  Interpreter interpreter(statements);
-  interpreter.Execute();
+  Interpreter interpreter;
+  Resolver resolver(&interpreter);
+  resolver.Resolve(statements);
+  if (hadError) {
+    return;
+  }
+  interpreter.Interpret(statements);
 }
 
 int RunFile(string filename) {
