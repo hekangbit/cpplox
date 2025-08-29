@@ -46,6 +46,7 @@ public:
   expr_t Primary();
   expr_t Expression();
 
+  vector<stmt_t> Block();
   stmt_t printStatement();
   stmt_t ifStatement();
   stmt_t blockStatement();

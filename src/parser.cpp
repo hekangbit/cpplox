@@ -229,6 +229,18 @@ expr_t Parser::Expression() {
   return Assignment();
 }
 
+vector<stmt_t> Parser::Block() {
+  vector<stmt_t> stmts;
+  while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
+    stmt_t stmt = Declaration();
+    if (stmt) {
+      stmts.push_back(stmt);
+    }
+  }
+  Consume(RIGHT_BRACE, "Expect '}' in block statement.");
+  return stmts;
+}
+
 stmt_t Parser::printStatement() {
   token_t t = Peek();
   expr_t expr = Expression();
@@ -250,15 +262,7 @@ stmt_t Parser::ifStatement() {
 }
 
 stmt_t Parser::blockStatement() {
-  vector<stmt_t> stmts;
-  while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
-    stmt_t stmt = Declaration();
-    if (stmt) {
-      stmts.push_back(stmt);
-    }
-  }
-  Consume(RIGHT_BRACE, "Expect '}' in block statement.");
-  return stmt_t(new BlockStmt(stmts));
+  return stmt_t(new BlockStmt(Block()));
 }
 
 stmt_t Parser::whileStatement() {
@@ -380,8 +384,7 @@ stmt_t Parser::FuncDeclaration() {
   }
   Consume(RIGHT_PAREN, "Expect ')' after parameters.");
   Consume(LEFT_BRACE, "Expect '{' before function body.");
-  stmt_t body = blockStatement();
-
+  auto body = Block();
   return stmt_t(new FunctionStmt(name, params, body));
 }
 

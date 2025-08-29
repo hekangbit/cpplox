@@ -172,7 +172,7 @@ void Resolver::Visit(FunctionStmt &stmt) {
 }
 
 void Resolver::Visit(ReturnStmt &stmt) {
-  if (is_func_enclosing) {
+  if (!is_func_enclosing) {
     LoxError(stmt.token, "Can't return from top-level code.");
   }
   Resolve(stmt.expr);

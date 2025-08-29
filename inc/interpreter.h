@@ -38,7 +38,7 @@ public:
 class Environment {
 public:
   using env_t = shared_ptr<Environment>;
-  Environment() : enclosing(nullptr) {}
+  Environment() {}
   Environment(env_t enclosing) : enclosing(enclosing) {}
   void Define(string name, const Value value);
   void Assign(token_t token, const Value value);

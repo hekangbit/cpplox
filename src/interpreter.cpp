@@ -23,11 +23,11 @@ void Environment::AssignAt(int depth, token_t name, const Value value) {
     Assign(name, value);
     return;
   }
-  env_t env(this);
+  Environment *tmp_env = this;
   while (depth--) {
-    env = env->enclosing;
+    tmp_env = tmp_env->enclosing.get();
   }
-  env->Assign(name, value);
+  tmp_env->Assign(name, value);
 }
 
 Value Environment::Get(token_t token) {
@@ -45,11 +45,11 @@ Value Environment::GetAt(int depth, string name) {
   if (depth == 0) {
     return values[name];
   }
-  env_t env(this);
+  Environment *tmp_env = this;
   while (depth--) {
-    env = env->enclosing;
+    tmp_env = tmp_env->enclosing.get();
   }
-  return env->values[name];
+  return tmp_env->values[name];
 }
 
 Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
@@ -58,13 +58,9 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
   for (int i = 0; i < declaration.params.size(); i++) {
     env->Define(declaration.params[i]->lexeme, arguments[i]);
   }
-  auto body = dynamic_pointer_cast<BlockStmt>(declaration.body);
-  if (!body) {
-    throw RuntimeException(declaration.name,
-                           "Expect block stmt body for function.");
-  }
+
   try {
-    interpreter.Execute(body->statements, env);
+    interpreter.Execute(declaration.body, env);
   } catch (const RuntimeReturn &e) {
     return e.val;
   }

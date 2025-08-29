@@ -86,14 +86,14 @@ public:
 
 class FunctionStmt : public Stmt {
 public:
-  FunctionStmt(token_t name, vector<token_t> params, stmt_t body)
+  FunctionStmt(token_t name, vector<token_t> params, vector<stmt_t> body)
       : name(name), params(params), body(body) {}
   virtual void Accept(Visitor &visitor) {
     visitor.Visit(*this);
   }
   token_t name;
   vector<token_t> params;
-  stmt_t body;
+  vector<stmt_t> body;
 };
 
 class ReturnStmt : public Stmt {
