@@ -8,6 +8,7 @@ class AstPrinter : public Visitor {
 public:
   AstPrinter() {}
   ~AstPrinter() {}
+
   void Walk(Expr &expr);
   string Parenthesize(string &name, vector<expr_t> &exprs);
   virtual Value Visit(NumberLiteralExpr &expr);

@@ -1,10 +1,10 @@
 #include "astprinter.h"
 #include "common.h"
-#include "loxerror.h"
 #include "expr.h"
-#include "resolver.h"
 #include "interpreter.h"
+#include "loxerror.h"
 #include "parser.h"
+#include "resolver.h"
 #include "scanner.h"
 
 void run(string &str) {

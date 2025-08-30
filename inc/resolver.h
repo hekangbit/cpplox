@@ -1,16 +1,18 @@
 #ifndef RESOLVER_H
 #define RESOLVER_H
 
-#include "loxerror.h"
 #include "common.h"
-#include "visitor.h"
 #include "expr.h"
-#include "stmt.h"
 #include "interpreter.h"
+#include "loxerror.h"
+#include "stmt.h"
+#include "visitor.h"
 
 class Resolver : public Visitor {
 public:
-  Resolver(Interpreter *interpreter) : interpreter(interpreter), is_func_enclosing(false) {}
+  Resolver(Interpreter *interpreter)
+      : interpreter(interpreter), is_func_enclosing(false) {}
+
   void Declare(token_t token);
   void Define(token_t token);
   void BeginScope();

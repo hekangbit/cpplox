@@ -108,7 +108,9 @@ public:
 
 class ClassStmt : public Stmt {
 public:
-  ClassStmt(token_t name, vector<shared_ptr<FunctionStmt>> methods) : name(name), methods(methods) {}
+  ClassStmt(token_t name, vector<shared_ptr<FunctionStmt>> methods)
+      : name(name), methods(methods) {}
+
   virtual void Accept(Visitor &visitor) {
     visitor.Visit(*this);
   }

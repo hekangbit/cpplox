@@ -345,7 +345,8 @@ stmt_t Parser::classStatement() {
   token_t name = Consume(IDENTIFIER, "Expect class name.");
   Consume(LEFT_BRACE, "Expect '{' before class body.");
   while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
-    shared_ptr<FunctionStmt> stmt = static_pointer_cast<FunctionStmt>(FuncDeclaration());
+    shared_ptr<FunctionStmt> stmt =
+        static_pointer_cast<FunctionStmt>(FuncDeclaration());
     methods.push_back(stmt);
   }
   Consume(RIGHT_BRACE, "Expect '}' after class body.");

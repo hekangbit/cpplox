@@ -2,12 +2,17 @@
 #define LOXCLASS_H
 
 #include "common.h"
+#include "loxcallable.h"
+#include "value.h"
 
-class LoxClass {
+class LoxClass : public LoxCallable {
 public:
   LoxClass(string name) : name(name) {}
-
-  string toString() {
+  virtual Value Call(Interpreter &interpreter, vector<Value> &arguments);
+  virtual int Arity() const {
+    return 0;
+  }
+  virtual string toString() const {
     return name;
   }
 

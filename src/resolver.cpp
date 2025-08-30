@@ -126,7 +126,7 @@ Value Resolver::Visit(VariableExpr &expr) {
 }
 
 Value Resolver::Visit(AssignExpr &expr) {
-  Resolve(expr.value); // right
+  Resolve(expr.value);            // right
   ResolveLocal(&expr, expr.name); // left
   return Value();
 }
@@ -170,8 +170,7 @@ void Resolver::Visit(WhileStmt &stmt) {
   Resolve(stmt.body);
 }
 
-void Resolver::Visit(BreakStmt &stmt) {
-}
+void Resolver::Visit(BreakStmt &stmt) {}
 
 void Resolver::Visit(FunctionStmt &stmt) {
   Declare(stmt.name);

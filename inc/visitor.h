@@ -49,7 +49,6 @@ public:
   virtual void Visit(FunctionStmt &stmt) = 0;
   virtual void Visit(ReturnStmt &stmt) = 0;
   virtual void Visit(ClassStmt &stmt) = 0;
-
 };
 
 #endif

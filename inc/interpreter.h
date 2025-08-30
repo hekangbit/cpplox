@@ -2,9 +2,9 @@
 #define INTERPRETER_H
 
 #include "common.h"
-#include "loxerror.h"
 #include "expr.h"
 #include "loxcallable.h"
+#include "loxerror.h"
 #include "stmt.h"
 #include "value.h"
 #include "visitor.h"
@@ -115,7 +115,7 @@ public:
 
   environment_t cur_env;
   environment_t global_env;
-  unordered_map<Expr*, int> locals;
+  unordered_map<Expr *, int> locals;
 };
 
 #endif
