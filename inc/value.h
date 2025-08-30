@@ -4,8 +4,10 @@
 #include "common.h"
 #include <variant>
 
+class LoxClass;
 class LoxCallable;
 using lox_callable_t = shared_ptr<LoxCallable>;
+using lox_class_t = shared_ptr<LoxClass>;
 
 class Value {
 public:
@@ -14,6 +16,7 @@ public:
   Value(bool val) : data(val) {}
   Value(string val) : data(val) {}
   Value(lox_callable_t val) : data(val) {}
+  Value(lox_class_t val) : data(val) {}
 
   bool isNil() const {
     return holds_alternative<monostate>(data);
@@ -30,6 +33,9 @@ public:
   bool isLoxCallable() const {
     return holds_alternative<lox_callable_t>(data);
   }
+  bool isLoxClass() const {
+    return holds_alternative<lox_class_t>(data);
+  }
 
   double getDouble() const {
     return get<double>(data);
@@ -42,6 +48,9 @@ public:
   }
   lox_callable_t getLoxCallable() const {
     return get<lox_callable_t>(data);
+  }
+  lox_class_t getLoxClass() const {
+    return get<lox_class_t>(data);
   }
 
   Value operator+(const Value &other) const;
@@ -63,7 +72,7 @@ public:
   }
 
 private:
-  variant<monostate, int, double, bool, string, lox_callable_t> data;
+  variant<monostate, int, double, bool, string, lox_callable_t, lox_class_t> data;
 };
 
 #endif

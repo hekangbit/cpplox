@@ -1,5 +1,6 @@
 #include "value.h"
 #include "loxcallable.h"
+#include "loxclass.h"
 
 Value Value::operator+(const Value &other) const {
   if (isDouble() && other.isDouble()) {
@@ -97,6 +98,10 @@ string Value::toString() const {
   if (isLoxCallable()) {
     auto func = getLoxCallable();
     return func->toString();
+  }
+  if (isLoxClass()) {
+    auto klass = getLoxClass();
+    return klass->toString();
   }
   return "nil";
 }

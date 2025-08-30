@@ -55,6 +55,7 @@ public:
   stmt_t breakStatement();
   stmt_t returnStatement();
   stmt_t expressionStatemenmt();
+  stmt_t classStatement();
   stmt_t Statement();
   stmt_t VarDeclaration();
   stmt_t FuncDeclaration();

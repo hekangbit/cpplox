@@ -340,6 +340,18 @@ stmt_t Parser::returnStatement() {
   return stmt_t(new ReturnStmt(token, expr));
 }
 
+stmt_t Parser::classStatement() {
+  vector<shared_ptr<FunctionStmt>> methods;
+  token_t name = Consume(IDENTIFIER, "Expect class name.");
+  Consume(LEFT_BRACE, "Expect '{' before class body.");
+  while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
+    shared_ptr<FunctionStmt> stmt = static_pointer_cast<FunctionStmt>(FuncDeclaration());
+    methods.push_back(stmt);
+  }
+  Consume(RIGHT_BRACE, "Expect '}' after class body.");
+  return stmt_t(new ClassStmt(name, methods));
+}
+
 stmt_t Parser::Statement() {
   if (Match({PRINT})) {
     return printStatement();
@@ -355,6 +367,8 @@ stmt_t Parser::Statement() {
     return breakStatement();
   } else if (Match({RETURN})) {
     return returnStatement();
+  } else if (Match({CLASS})) {
+    return classStatement();
   }
   return expressionStatemenmt();
 }

@@ -20,6 +20,7 @@ public:
   void Resolve(vector<stmt_t> &statements);
   void ResolveLocal(Expr *expr, token_t token);
   void ResolveFunction(FunctionStmt &func);
+  void ResolveClass(ClassStmt &klass);
 
   virtual Value Visit(NumberLiteralExpr &expr);
   virtual Value Visit(StringLiteralExpr &expr);
@@ -41,6 +42,7 @@ public:
   virtual void Visit(BreakStmt &stmt);
   virtual void Visit(FunctionStmt &stmt);
   virtual void Visit(ReturnStmt &stmt);
+  virtual void Visit(ClassStmt &stmt);
 
   vector<map<string, bool>> scopes;
   Interpreter *interpreter;

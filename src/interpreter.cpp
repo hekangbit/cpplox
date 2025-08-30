@@ -1,5 +1,6 @@
 #include "interpreter.h"
 #include "loxcallable.h"
+#include "loxclass.h"
 
 void Environment::Define(string name, const Value value) {
   values[name] = value;
@@ -311,6 +312,12 @@ void Interpreter::Visit(ReturnStmt &stmt) {
     val = Evaluate(stmt.expr);
   }
   throw RuntimeReturn(val);
+}
+
+void Interpreter::Visit(ClassStmt &stmt) {
+  cur_env->Define(stmt.name->lexeme, Value());
+  auto klass = make_shared<LoxClass>(stmt.name->lexeme);
+  cur_env->Assign(stmt.name, klass);
 }
 
 Value Interpreter::Evaluate(expr_t expr) {

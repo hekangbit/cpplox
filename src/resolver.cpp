@@ -66,6 +66,14 @@ void Resolver::ResolveFunction(FunctionStmt &func) {
   is_func_enclosing = prev_state;
 }
 
+void Resolver::ResolveClass(ClassStmt &klass) {
+  BeginScope();
+  for (auto method : klass.methods) {
+    Resolve(method);
+  }
+  EndScope();
+}
+
 Value Resolver::Visit(NumberLiteralExpr &expr) {
   return Value();
 }
@@ -176,4 +184,10 @@ void Resolver::Visit(ReturnStmt &stmt) {
     LoxError(stmt.token, "Can't return from top-level code.");
   }
   Resolve(stmt.expr);
+}
+
+void Resolver::Visit(ClassStmt &stmt) {
+  Declare(stmt.name);
+  Define(stmt.name);
+  ResolveClass(stmt);
 }

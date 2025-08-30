@@ -30,6 +30,7 @@ public:
   virtual void Visit(BreakStmt &stmt);
   virtual void Visit(FunctionStmt &stmt);
   virtual void Visit(ReturnStmt &stmt);
+  virtual void Visit(ClassStmt &stmt);
 
 private:
 };
