@@ -301,7 +301,7 @@ void Interpreter::Visit(BreakStmt &stmt) {
 }
 
 void Interpreter::Visit(FunctionStmt &stmt) {
-  shared_ptr<LoxCallable> function(new LoxFunction(stmt, cur_env));
+  shared_ptr<LoxCallable> function(new LoxFunction(stmt, cur_env)); // upcast
   cur_env->Define(stmt.name->lexeme, function);
 }
 
