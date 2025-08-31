@@ -139,6 +139,17 @@ Value Resolver::Visit(CallExpr &expr) {
   return Value();
 }
 
+Value Resolver::Visit(GetExpr &expr) {
+  Resolve(expr.object);
+  return Value();
+}
+
+Value Resolver::Visit(SetExpr &expr) {
+  Resolve(expr.object);
+  Resolve(expr.value);
+  return Value();
+}
+
 void Resolver::Visit(ExprStmt &stmt) {
   Resolve(stmt.expr);
 }

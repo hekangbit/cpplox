@@ -15,6 +15,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <vector>
+#include <unordered_map>
+#include <exception>
 
 using namespace std;
 

@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "loxclass.h"
+#include "token.h"
 
 class LoxInstance {
 public:
@@ -11,6 +12,10 @@ public:
     return klass->name + " instance";
   }
 
+  Value Get(token_t name);
+  void Set(token_t name, Value val);
+
+  map<string, Value> fields;
   LoxClass *klass;
 };
 

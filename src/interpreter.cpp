@@ -1,6 +1,7 @@
 #include "interpreter.h"
 #include "loxcallable.h"
 #include "loxclass.h"
+#include "loxinstance.h"
 
 void Environment::Define(string name, const Value value) {
   values[name] = value;
@@ -254,6 +255,26 @@ Value Interpreter::Visit(CallExpr &expr) {
                                            ".");
   }
   return func->Call(*this, arguments);
+}
+
+Value Interpreter::Visit(GetExpr &expr) {
+  Value obj = Evaluate(expr.object);
+  if (obj.isLoxInstance()) {
+    auto instance = obj.getLoxInstance();
+    return instance->Get(expr.name);
+  }
+  throw RuntimeException(expr.name, "Only lox instance can get property.");
+}
+
+Value Interpreter::Visit(SetExpr &expr) {
+  Value obj = Evaluate(expr.object);
+  if (obj.isLoxInstance()) {
+    Value val = Evaluate(expr.value);
+    auto instance = obj.getLoxInstance();
+    instance->Set(expr.name, val);
+    return val;
+  }
+  throw RuntimeException(expr.name, "Only lox instance can set property.");
 }
 
 void Interpreter::Visit(ExprStmt &stmt) {

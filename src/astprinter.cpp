@@ -80,6 +80,14 @@ Value AstPrinter::Visit(CallExpr &expr) {
   return string("()");
 }
 
+Value AstPrinter::Visit(GetExpr &expr) {
+  return Value();
+}
+
+Value AstPrinter::Visit(SetExpr &expr) {
+  return Value();
+}
+
 void AstPrinter::Visit(ExprStmt &stmt) {}
 
 void AstPrinter::Visit(PrintStmt &stmt) {}

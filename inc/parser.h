@@ -33,6 +33,7 @@ public:
   void Synchronize();
 
   expr_t FinishCall(expr_t expr);
+  expr_t Property(expr_t expr);
 
   expr_t Assignment();
   expr_t LogicalOr();

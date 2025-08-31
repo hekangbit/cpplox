@@ -124,4 +124,25 @@ public:
   vector<expr_t> arguments;
 };
 
+class GetExpr : public Expr {
+public:
+  GetExpr(expr_t object, token_t name) : object(object), name(name) {}
+  Value Accept(Visitor &visitor) {
+    return visitor.Visit(*this);
+  }
+  expr_t object;
+  token_t name;
+};
+
+class SetExpr : public Expr {
+public:
+  SetExpr(expr_t object, token_t name, expr_t value) : object(object), name(name), value(value) {}
+  Value Accept(Visitor &visitor) {
+    return visitor.Visit(*this);
+  }
+  expr_t object;
+  token_t name;
+  expr_t value;
+};
+
 #endif

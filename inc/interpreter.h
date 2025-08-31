@@ -8,22 +8,7 @@
 #include "stmt.h"
 #include "value.h"
 #include "visitor.h"
-#include <exception>
-#include <unordered_map>
-#include <vector>
-
-class Interpreter;
-
-class RuntimeException : public exception {
-public:
-  RuntimeException(token_t token, string message)
-      : token(token), message(message) {}
-  const char *what() const throw() {
-    return message.c_str();
-  }
-  token_t token;
-  string message;
-};
+#include "rtexception.h"
 
 class RuntimeBreak : public exception {
 public:
@@ -53,6 +38,7 @@ private:
 
 using environment_t = Environment::env_t;
 
+class Interpreter;
 class LoxFunction : public LoxCallable {
 public:
   LoxFunction(FunctionStmt &declaration, environment_t env)
@@ -95,6 +81,8 @@ public:
   virtual Value Visit(LogicalExpr &expr);
   virtual Value Visit(AssignExpr &expr);
   virtual Value Visit(CallExpr &expr);
+  virtual Value Visit(GetExpr &expr);
+  virtual Value Visit(SetExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);
