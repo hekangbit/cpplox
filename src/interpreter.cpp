@@ -3,73 +3,6 @@
 #include "loxclass.h"
 #include "loxinstance.h"
 
-void Environment::Define(string name, const Value value) {
-  values[name] = value;
-}
-
-void Environment::Assign(token_t token, const Value value) {
-  if (values.count(token->lexeme)) {
-    values[token->lexeme] = value;
-    return;
-  }
-  if (enclosing != nullptr) {
-    enclosing->Assign(token, value);
-    return;
-  }
-  throw RuntimeException(token, string("Undefined variable <") + token->lexeme +
-                                    "> in Assign Env.");
-}
-
-void Environment::AssignAt(int depth, token_t name, const Value value) {
-  if (depth == 0) {
-    Assign(name, value);
-    return;
-  }
-  Environment *tmp_env = this;
-  while (depth--) {
-    tmp_env = tmp_env->enclosing.get();
-  }
-  tmp_env->Assign(name, value);
-}
-
-Value Environment::Get(token_t token) {
-  if (values.count(token->lexeme)) {
-    return values[token->lexeme];
-  }
-  if (enclosing != nullptr) {
-    return enclosing->Get(token);
-  }
-  throw RuntimeException(token, string("Undefined variable <") + token->lexeme +
-                                    "> in Get Env.");
-}
-
-Value Environment::GetAt(int depth, string name) {
-  if (depth == 0) {
-    return values[name];
-  }
-  Environment *tmp_env = this;
-  while (depth--) {
-    tmp_env = tmp_env->enclosing.get();
-  }
-  return tmp_env->values[name];
-}
-
-Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
-  auto env = make_shared<Environment>(closure);
-
-  for (int i = 0; i < declaration.params.size(); i++) {
-    env->Define(declaration.params[i]->lexeme, arguments[i]);
-  }
-
-  try {
-    interpreter.Execute(declaration.body, env);
-  } catch (const RuntimeReturn &e) {
-    return e.val;
-  }
-
-  return Value();
-}
-
 Interpreter::Interpreter() {
   global_env = make_shared<Environment>();
   global_env->Define(
@@ -337,7 +270,13 @@ void Interpreter::Visit(ReturnStmt &stmt) {
 
 void Interpreter::Visit(ClassStmt &stmt) {
   cur_env->Define(stmt.name->lexeme, Value());
-  auto klass = make_shared<LoxClass>(stmt.name->lexeme);
+
+  map<string, lox_func_t> methods;
+  for (auto func_stmt : stmt.methods) {
+    auto method = make_shared<LoxFunction>(*(func_stmt.get()), cur_env);
+    methods[func_stmt->name->lexeme] = method;
+  }
+  auto klass = make_shared<LoxClass>(stmt.name->lexeme, methods);
   cur_env->Assign(stmt.name, klass);
 }
 

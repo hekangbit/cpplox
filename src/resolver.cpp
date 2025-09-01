@@ -53,9 +53,9 @@ void Resolver::ResolveLocal(Expr *expr, token_t token) {
   }
 }
 
-void Resolver::ResolveFunction(FunctionStmt &func) {
+void Resolver::ResolveFunction(FunctionStmt &func, FunctionType type) {
   bool prev_state = is_func_enclosing;
-  is_func_enclosing = true;
+  is_func_enclosing = type;
   BeginScope();
   for (auto para : func.params) {
     Declare(para);
@@ -64,14 +64,6 @@ void Resolver::ResolveFunction(FunctionStmt &func) {
   Resolve(func.body);
   EndScope();
   is_func_enclosing = prev_state;
-}
-
-void Resolver::ResolveClass(ClassStmt &klass) {
-  BeginScope();
-  for (auto method : klass.methods) {
-    Resolve(method);
-  }
-  EndScope();
 }
 
 Value Resolver::Visit(NumberLiteralExpr &expr) {
@@ -186,11 +178,11 @@ void Resolver::Visit(BreakStmt &stmt) {}
 void Resolver::Visit(FunctionStmt &stmt) {
   Declare(stmt.name);
   Define(stmt.name);
-  ResolveFunction(stmt);
+  ResolveFunction(stmt, FUNC_TYPE_FUNCTION);
 }
 
 void Resolver::Visit(ReturnStmt &stmt) {
-  if (!is_func_enclosing) {
+  if (is_func_enclosing == FUNC_TYPE_NONE) {
     LoxError(stmt.token, "Can't return from top-level code.");
   }
   Resolve(stmt.expr);
@@ -199,5 +191,7 @@ void Resolver::Visit(ReturnStmt &stmt) {
 void Resolver::Visit(ClassStmt &stmt) {
   Declare(stmt.name);
   Define(stmt.name);
-  ResolveClass(stmt);
+  for (auto method : stmt.methods) {
+    ResolveFunction(*(method.get()), FUNC_TYPE_METHOD);
+  }
 }

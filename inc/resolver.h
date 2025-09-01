@@ -10,6 +10,12 @@
 
 class Resolver : public Visitor {
 public:
+  typedef enum {
+    FUNC_TYPE_NONE,
+    FUNC_TYPE_FUNCTION,
+    FUNC_TYPE_METHOD
+  } FunctionType;
+
   Resolver(Interpreter *interpreter)
       : interpreter(interpreter), is_func_enclosing(false) {}
 
@@ -21,8 +27,7 @@ public:
   void Resolve(stmt_t statement);
   void Resolve(vector<stmt_t> &statements);
   void ResolveLocal(Expr *expr, token_t token);
-  void ResolveFunction(FunctionStmt &func);
-  void ResolveClass(ClassStmt &klass);
+  void ResolveFunction(FunctionStmt &func, FunctionType type);
 
   virtual Value Visit(NumberLiteralExpr &expr);
   virtual Value Visit(StringLiteralExpr &expr);
