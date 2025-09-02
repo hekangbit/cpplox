@@ -145,4 +145,13 @@ public:
   expr_t value;
 };
 
+class ThisExpr : public Expr {
+public:
+  ThisExpr(token_t keyword) : keyword(keyword) {}
+  Value Accept(Visitor &visitor) {
+    return visitor.Visit(*this);
+  }
+  token_t keyword;
+};
+
 #endif

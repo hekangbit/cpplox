@@ -25,7 +25,7 @@ void Environment::AssignAt(int depth, token_t name, const Value value) {
   }
   Environment *tmp_env = this;
   while (depth--) {
-    tmp_env = tmp_env->enclosing.get();
+    tmp_env = tmp_env->enclosing;
   }
   tmp_env->Assign(name, value);
 }
@@ -47,7 +47,7 @@ Value Environment::GetAt(int depth, string name) {
   }
   Environment *tmp_env = this;
   while (depth--) {
-    tmp_env = tmp_env->enclosing.get();
+    tmp_env = tmp_env->enclosing;
   }
   return tmp_env->values[name];
 }

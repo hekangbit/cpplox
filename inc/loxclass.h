@@ -2,8 +2,8 @@
 #define LOXCLASS_H
 
 #include "common.h"
-#include "loxcallable.h"
 #include "value.h"
+#include "loxcallable.h"
 #include "loxfunction.h"
 
 class LoxClass : public LoxCallable {

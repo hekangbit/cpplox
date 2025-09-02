@@ -1,6 +1,5 @@
 #include "value.h"
 #include "loxcallable.h"
-#include "loxclass.h"
 #include "loxinstance.h"
 
 double Value::getDouble() const {
@@ -16,14 +15,7 @@ string Value::getString() const {
 }
 
 lox_callable_t Value::getLoxCallable() const {
-  if (isLoxClass()) {
-    return static_pointer_cast<LoxCallable>(getLoxClass());
-  }
   return get<lox_callable_t>(data);
-}
-
-lox_class_t Value::getLoxClass() const {
-  return get<lox_class_t>(data);
 }
 
 lox_instance_t Value::getLoxInstance() const {
@@ -126,10 +118,6 @@ string Value::toString() const {
   if (isLoxCallable()) {
     auto func = getLoxCallable();
     return func->toString();
-  }
-  if (isLoxClass()) {
-    auto klass = getLoxClass();
-    return klass->toString();
   }
   if (isLoxInstance()) {
     auto instance = getLoxInstance();

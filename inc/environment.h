@@ -7,20 +7,25 @@
 
 class Environment {
 public:
-  using env_t = shared_ptr<Environment>;
   Environment() {}
-  Environment(env_t enclosing) : enclosing(enclosing) {}
+  Environment(Environment *enclosing) : enclosing(enclosing) {
+    if (enclosing) {
+      enclosing->Add(this);
+    }
+  }
   void Define(string name, const Value value);
   void Assign(token_t token, const Value value);
   void AssignAt(int depth, token_t token, const Value value);
   Value Get(token_t token);
   Value GetAt(int depth, string name);
+  void Add(Environment *env) {
+    childs.push_back(env);
+  }
 
 private:
   unordered_map<string, Value> values;
-  env_t enclosing;
+  list<Environment*> childs;
+  Environment *enclosing;
 };
-
-using environment_t = Environment::env_t;
 
 #endif

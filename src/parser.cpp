@@ -230,6 +230,9 @@ expr_t Parser::Primary() {
     Consume(RIGHT_PAREN, "expect ')' after expression.");
     return expr_t(new GroupingExpr(expr));
   }
+  if (Match({_THIS})) {
+    return expr_t(new ThisExpr(Previous()));
+  }
   if (Match({IDENTIFIER})) {
     token_t t = Previous();
     return expr_t(new VariableExpr(t));

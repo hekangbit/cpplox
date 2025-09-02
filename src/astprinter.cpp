@@ -88,6 +88,10 @@ Value AstPrinter::Visit(SetExpr &expr) {
   return Value();
 }
 
+Value AstPrinter::Visit(ThisExpr &expr) {
+  return Value();
+}
+
 void AstPrinter::Visit(ExprStmt &stmt) {}
 
 void AstPrinter::Visit(PrintStmt &stmt) {}

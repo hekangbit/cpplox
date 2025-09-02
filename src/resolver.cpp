@@ -142,6 +142,11 @@ Value Resolver::Visit(SetExpr &expr) {
   return Value();
 }
 
+Value Resolver::Visit(ThisExpr &expr) {
+  ResolveLocal(&expr, expr.keyword);
+  return Value();
+}
+
 void Resolver::Visit(ExprStmt &stmt) {
   Resolve(stmt.expr);
 }
@@ -191,7 +196,11 @@ void Resolver::Visit(ReturnStmt &stmt) {
 void Resolver::Visit(ClassStmt &stmt) {
   Declare(stmt.name);
   Define(stmt.name);
+  BeginScope();
+  // define this in an implicit scope just outside of the block for the method body.
+  scopes.back()["this"] = true;
   for (auto method : stmt.methods) {
     ResolveFunction(*(method.get()), FUNC_TYPE_METHOD);
   }
+  EndScope();
 }

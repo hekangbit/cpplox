@@ -45,6 +45,7 @@ public:
   virtual Value Visit(CallExpr &expr);
   virtual Value Visit(GetExpr &expr);
   virtual Value Visit(SetExpr &expr);
+  virtual Value Visit(ThisExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);
@@ -57,14 +58,14 @@ public:
   virtual void Visit(ClassStmt &stmt);
 
   Value Evaluate(expr_t expr);
-  void Execute(vector<stmt_t> statements, environment_t env);
+  void Execute(vector<stmt_t> statements, Environment *env);
   void Execute(stmt_t stmt);
   void Interpret(vector<stmt_t> &statements);
 
   void Resolve(Expr *expr, int depth);
 
-  environment_t cur_env;
-  environment_t global_env;
+  Environment *cur_env;
+  Environment *global_env;
   unordered_map<Expr *, int> locals;
 };
 

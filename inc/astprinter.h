@@ -24,6 +24,7 @@ public:
   virtual Value Visit(CallExpr &expr);
   virtual Value Visit(GetExpr &expr);
   virtual Value Visit(SetExpr &expr);
+  virtual Value Visit(ThisExpr &expr);
   virtual void Visit(ExprStmt &stmt);
   virtual void Visit(PrintStmt &stmt);
   virtual void Visit(BlockStmt &stmt);

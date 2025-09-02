@@ -14,6 +14,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <list>
 #include <vector>
 #include <unordered_map>
 #include <exception>

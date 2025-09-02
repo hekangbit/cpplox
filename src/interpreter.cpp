@@ -4,7 +4,7 @@
 #include "loxinstance.h"
 
 Interpreter::Interpreter() {
-  global_env = make_shared<Environment>();
+  global_env = new Environment();
   global_env->Define(
       "clock",
       make_shared<LoxCallable>(
@@ -194,7 +194,7 @@ Value Interpreter::Visit(GetExpr &expr) {
   Value obj = Evaluate(expr.object);
   if (obj.isLoxInstance()) {
     auto instance = obj.getLoxInstance();
-    return instance->Get(expr.name);
+    return instance->Get(expr.name, instance);
   }
   throw RuntimeException(expr.name, "Only lox instance can get property.");
 }
@@ -210,6 +210,10 @@ Value Interpreter::Visit(SetExpr &expr) {
   throw RuntimeException(expr.name, "Only lox instance can set property.");
 }
 
+Value Interpreter::Visit(ThisExpr &expr) {
+  return LookupVariable(expr.keyword, &expr);
+}
+
 void Interpreter::Visit(ExprStmt &stmt) {
   Value value = Evaluate(stmt.expr);
 }
@@ -220,7 +224,7 @@ void Interpreter::Visit(PrintStmt &stmt) {
 }
 
 void Interpreter::Visit(BlockStmt &stmt) {
-  auto env = make_shared<Environment>(cur_env);
+  auto env = new Environment(cur_env);
   Execute(stmt.statements, env);
 }
 
@@ -276,7 +280,8 @@ void Interpreter::Visit(ClassStmt &stmt) {
     auto method = make_shared<LoxFunction>(*(func_stmt.get()), cur_env);
     methods[func_stmt->name->lexeme] = method;
   }
-  auto klass = make_shared<LoxClass>(stmt.name->lexeme, methods);
+
+  lox_callable_t klass(new LoxClass(stmt.name->lexeme, methods)); // upcast
   cur_env->Assign(stmt.name, klass);
 }
 
@@ -284,8 +289,8 @@ Value Interpreter::Evaluate(expr_t expr) {
   return expr->Accept(*this);
 }
 
-void Interpreter::Execute(vector<stmt_t> statements, environment_t env) {
-  environment_t prev_env = cur_env;
+void Interpreter::Execute(vector<stmt_t> statements, Environment *env) {
+  Environment *prev_env = cur_env;
   cur_env = env;
   try {
     for (auto &statement : statements) {

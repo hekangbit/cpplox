@@ -1,15 +1,13 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-#include "common.h"
 #include <variant>
+#include "common.h"
 
-class LoxClass;
-class LoxCallable;
 class LoxInstance;
-using lox_callable_t = shared_ptr<LoxCallable>;
-using lox_class_t = shared_ptr<LoxClass>;
 using lox_instance_t = shared_ptr<LoxInstance>;
+class LoxCallable;
+using lox_callable_t = shared_ptr<LoxCallable>;
 
 class Value {
 public:
@@ -18,7 +16,6 @@ public:
   Value(bool val) : data(val) {}
   Value(string val) : data(val) {}
   Value(lox_callable_t val) : data(val) {}
-  Value(lox_class_t val) : data(val) {}
   Value(lox_instance_t val) : data(val) {}
 
   bool isNil() const {
@@ -34,13 +31,7 @@ public:
     return holds_alternative<std::string>(data);
   }
   bool isLoxCallable() const {
-    if (isLoxClass()) {
-      return true;
-    }
     return holds_alternative<lox_callable_t>(data);
-  }
-  bool isLoxClass() const {
-    return holds_alternative<lox_class_t>(data);
   }
   bool isLoxInstance() const {
     return holds_alternative<lox_instance_t>(data);
@@ -50,7 +41,6 @@ public:
   bool getBool() const;
   string getString() const;
   lox_callable_t getLoxCallable() const;
-  lox_class_t getLoxClass() const;
   lox_instance_t getLoxInstance() const;
 
   Value operator+(const Value &other) const;
@@ -72,9 +62,7 @@ public:
   }
 
 private:
-  variant<monostate, int, double, bool, string, lox_callable_t, lox_class_t,
-          lox_instance_t>
-      data;
+  variant<monostate, int, double, bool, string, lox_callable_t, lox_instance_t> data;
 };
 
 #endif

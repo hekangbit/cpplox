@@ -2,8 +2,8 @@
 #define LOXINSTANCE_H
 
 #include "common.h"
-#include "loxclass.h"
 #include "token.h"
+#include "loxclass.h"
 
 class LoxInstance {
 public:
@@ -12,7 +12,7 @@ public:
     return klass->name + " instance";
   }
 
-  Value Get(token_t name);
+  Value Get(token_t name, lox_instance_t &instance);
   void Set(token_t name, Value val);
 
   map<string, Value> fields;

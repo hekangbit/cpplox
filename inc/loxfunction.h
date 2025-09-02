@@ -2,15 +2,19 @@
 #define LOXFUNCTION_H
 
 #include "common.h"
-#include "value.h"
-#include "loxcallable.h"
 #include "stmt.h"
+#include "value.h"
 #include "environment.h"
+#include "loxcallable.h"
 
 class Interpreter;
+class LoxFunction;
+
+using lox_func_t = shared_ptr<LoxFunction>;
+
 class LoxFunction : public LoxCallable {
 public:
-  LoxFunction(FunctionStmt &declaration, environment_t env)
+  LoxFunction(FunctionStmt &declaration, Environment *env)
       : declaration(declaration), closure(env) {}
 
   virtual int Arity() const {
@@ -20,14 +24,14 @@ public:
   virtual string toString() const {
     return "<fn " + declaration.name->lexeme + ">";
   }
+  virtual lox_func_t Bind(lox_instance_t &instance);
 
   virtual ~LoxFunction() {}
 
-private:
   FunctionStmt declaration;
-  environment_t closure;
+  Environment *closure;
 };
 
-using lox_func_t = shared_ptr<LoxFunction>;
+
 
 #endif
