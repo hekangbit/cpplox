@@ -7,7 +7,7 @@
 
 class Environment {
 public:
-  Environment() {}
+  Environment() : enclosing(nullptr) {}
   Environment(Environment *enclosing) : enclosing(enclosing) {
     if (enclosing) {
       enclosing->Add(this);
