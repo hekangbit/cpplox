@@ -359,6 +359,11 @@ stmt_t Parser::returnStatement() {
 stmt_t Parser::classStatement() {
   vector<shared_ptr<FunctionStmt>> methods;
   token_t name = Consume(IDENTIFIER, "Expect class name.");
+  shared_ptr<VariableExpr> super_class_expr;
+  if (Match({LESS})) {
+    token_t klass = Consume(IDENTIFIER, "Expect superclass name after '<'.");
+    super_class_expr = make_shared<VariableExpr>(klass);
+  }
   Consume(LEFT_BRACE, "Expect '{' before class body.");
   while (!Check(RIGHT_BRACE) && !IsAtEnd()) {
     shared_ptr<FunctionStmt> stmt =
@@ -366,7 +371,7 @@ stmt_t Parser::classStatement() {
     methods.push_back(stmt);
   }
   Consume(RIGHT_BRACE, "Expect '}' after class body.");
-  return stmt_t(new ClassStmt(name, methods));
+  return stmt_t(new ClassStmt(name, methods, super_class_expr));
 }
 
 stmt_t Parser::Statement() {

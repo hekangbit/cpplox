@@ -207,6 +207,12 @@ void Resolver::Visit(ClassStmt &stmt) {
   class_type =  CLASS_TYPE_CLASS;
   Declare(stmt.name);
   Define(stmt.name);
+  if (stmt.superclass) {
+    if (stmt.superclass->token->lexeme.compare(stmt.name->lexeme) == 0) {
+      LoxError(stmt.superclass->token, "A class can't inherit from itself.");
+    }
+    Resolve(stmt.superclass);
+  }
   BeginScope();
   // define "this" in an implicit scope just outside of the block for the method body.
   scopes.back()["this"] = true;

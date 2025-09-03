@@ -2,7 +2,8 @@
 #include "interpreter.h"
 #include "loxinstance.h"
 
-LoxClass::LoxClass(string name, map<string, lox_func_t> methods) : name(name), methods(methods) {}
+LoxClass::LoxClass(string name, lox_class_t superclass, map<string, lox_func_t> methods) :
+  name(name), superclass(superclass), methods(methods) {}
 
 int LoxClass::Arity() const {
   auto it = methods.find("init");
