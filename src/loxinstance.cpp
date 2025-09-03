@@ -10,7 +10,7 @@ Value LoxInstance::Get(token_t name, lox_instance_t &instance) {
     lox_callable_t p(klass->methods[name->lexeme]->Bind(instance));
     return p;
   }
-  throw RuntimeException(name, "Underfined property '" + name->lexeme + "'.");
+  throw RuntimeException(name, "Undefined property '" + name->lexeme + "'.");
 }
 
 void LoxInstance::Set(token_t name, Value val) {
