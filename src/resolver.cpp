@@ -54,8 +54,8 @@ void Resolver::ResolveLocal(Expr *expr, token_t token) {
 }
 
 void Resolver::ResolveFunction(FunctionStmt &func, FunctionType type) {
-  bool prev_state = is_func_enclosing;
-  is_func_enclosing = type;
+  FunctionType prev_state = func_type;
+  func_type = type;
   BeginScope();
   for (auto para : func.params) {
     Declare(para);
@@ -63,7 +63,7 @@ void Resolver::ResolveFunction(FunctionStmt &func, FunctionType type) {
   }
   Resolve(func.body);
   EndScope();
-  is_func_enclosing = prev_state;
+  func_type = prev_state;
 }
 
 Value Resolver::Visit(NumberLiteralExpr &expr) {
@@ -143,6 +143,9 @@ Value Resolver::Visit(SetExpr &expr) {
 }
 
 Value Resolver::Visit(ThisExpr &expr) {
+  if (class_type == CLASS_TYPE_NONE) {
+    LoxError(expr.keyword, "Can't use 'this' outside of a class.");
+  }
   ResolveLocal(&expr, expr.keyword);
   return Value();
 }
@@ -187,13 +190,15 @@ void Resolver::Visit(FunctionStmt &stmt) {
 }
 
 void Resolver::Visit(ReturnStmt &stmt) {
-  if (is_func_enclosing == FUNC_TYPE_NONE) {
+  if (func_type == FUNC_TYPE_NONE) {
     LoxError(stmt.token, "Can't return from top-level code.");
   }
   Resolve(stmt.expr);
 }
 
 void Resolver::Visit(ClassStmt &stmt) {
+  ClassType prev = class_type;
+  class_type =  CLASS_TYPE_CLASS;
   Declare(stmt.name);
   Define(stmt.name);
   BeginScope();
@@ -203,4 +208,5 @@ void Resolver::Visit(ClassStmt &stmt) {
     ResolveFunction(*(method.get()), FUNC_TYPE_METHOD);
   }
   EndScope();
+  class_type = prev;
 }

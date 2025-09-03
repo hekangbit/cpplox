@@ -16,8 +16,13 @@ public:
     FUNC_TYPE_METHOD
   } FunctionType;
 
+  typedef enum {
+    CLASS_TYPE_NONE,
+    CLASS_TYPE_CLASS
+  } ClassType;
+
   Resolver(Interpreter *interpreter)
-      : interpreter(interpreter), is_func_enclosing(false) {}
+      : interpreter(interpreter), func_type(FUNC_TYPE_NONE), class_type(CLASS_TYPE_NONE) {}
 
   void Declare(token_t token);
   void Define(token_t token);
@@ -56,7 +61,8 @@ public:
 
   vector<map<string, bool>> scopes;
   Interpreter *interpreter;
-  bool is_func_enclosing;
+  FunctionType func_type;
+  ClassType class_type;
 };
 
 #endif
