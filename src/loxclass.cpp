@@ -25,3 +25,13 @@ Value LoxClass::Call(Interpreter &interpreter, vector<Value> &arguments) {
   }
   return Value(instance);
 }
+
+lox_func_t LoxClass::FindMethod(string &name) {
+  if (methods.count(name)) {
+    return methods[name];
+  }
+  if (superclass->methods.count(name)) {
+    return superclass->methods[name];
+  }
+  return nullptr;
+}

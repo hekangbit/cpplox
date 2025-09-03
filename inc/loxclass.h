@@ -15,6 +15,7 @@ public:
   virtual Value Call(Interpreter &interpreter, vector<Value> &arguments);
   virtual int Arity() const;
   virtual string toString() const;
+  virtual lox_func_t FindMethod(string &name);
   string name;
   lox_class_t superclass;
   map<string, lox_func_t> methods;
