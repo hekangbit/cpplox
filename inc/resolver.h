@@ -13,6 +13,7 @@ public:
   typedef enum {
     FUNC_TYPE_NONE,
     FUNC_TYPE_FUNCTION,
+    FUNC_TYPE_INIT,
     FUNC_TYPE_METHOD
   } FunctionType;
 

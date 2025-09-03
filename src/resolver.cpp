@@ -193,6 +193,12 @@ void Resolver::Visit(ReturnStmt &stmt) {
   if (func_type == FUNC_TYPE_NONE) {
     LoxError(stmt.token, "Can't return from top-level code.");
   }
+  if (stmt.expr == nullptr) {
+    return;
+  }
+  if (func_type == FUNC_TYPE_INIT) {
+    LoxError(stmt.token, "Can't return a value from lox initializer.");
+  }
   Resolve(stmt.expr);
 }
 
@@ -202,10 +208,14 @@ void Resolver::Visit(ClassStmt &stmt) {
   Declare(stmt.name);
   Define(stmt.name);
   BeginScope();
-  // define this in an implicit scope just outside of the block for the method body.
+  // define "this" in an implicit scope just outside of the block for the method body.
   scopes.back()["this"] = true;
   for (auto method : stmt.methods) {
-    ResolveFunction(*(method.get()), FUNC_TYPE_METHOD);
+    FunctionType type = FUNC_TYPE_METHOD;
+    if (method->name->lexeme.compare("init") == 0) {
+      type = FUNC_TYPE_INIT;
+    }
+    ResolveFunction(*(method.get()), type);
   }
   EndScope();
   class_type = prev;

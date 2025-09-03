@@ -11,7 +11,14 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
   try {
     interpreter.Execute(declaration.body, env);
   } catch (const RuntimeReturn &e) {
+    if (is_initializer) {
+      return closure->GetAt(0, "this");
+    }
     return e.val;
+  }
+
+  if (is_initializer) {
+    return closure->GetAt(0, "this");
   }
 
   return Value();
@@ -20,5 +27,5 @@ Value LoxFunction::Call(Interpreter &interpreter, vector<Value> &arguments) {
 lox_func_t LoxFunction::Bind(lox_instance_t &instance) {
   auto env = new Environment(closure);
   env->Define("this", instance);
-  return make_shared<LoxFunction>(declaration, env);
+  return make_shared<LoxFunction>(declaration, env, is_initializer);
 }

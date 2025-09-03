@@ -260,7 +260,7 @@ void Interpreter::Visit(BreakStmt &stmt) {
 }
 
 void Interpreter::Visit(FunctionStmt &stmt) {
-  shared_ptr<LoxCallable> function(new LoxFunction(stmt, cur_env)); // upcast
+  shared_ptr<LoxCallable> function(new LoxFunction(stmt, cur_env, false)); // upcast
   cur_env->Define(stmt.name->lexeme, function);
 }
 
@@ -277,7 +277,8 @@ void Interpreter::Visit(ClassStmt &stmt) {
 
   map<string, lox_func_t> methods;
   for (auto func_stmt : stmt.methods) {
-    auto method = make_shared<LoxFunction>(*(func_stmt.get()), cur_env);
+    bool is_init = func_stmt->name->lexeme.compare("init") == 0;
+    auto method = make_shared<LoxFunction>(*(func_stmt.get()), cur_env, is_init);
     methods[func_stmt->name->lexeme] = method;
   }
 

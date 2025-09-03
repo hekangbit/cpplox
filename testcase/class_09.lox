@@ -1,0 +1,6 @@
+// report resolver error, cause could not return in ctor
+class Foo {
+  init() {
+    return "something else";
+  }
+}
