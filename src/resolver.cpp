@@ -150,6 +150,14 @@ Value Resolver::Visit(ThisExpr &expr) {
   return Value();
 }
 
+Value Resolver::Visit(SuperExpr &expr) {
+  if (class_type == CLASS_TYPE_NONE) {
+    LoxError(expr.keyword, "Can't use 'super' outside of a class.");
+  }
+  ResolveLocal(&expr, expr.keyword);
+  return Value();
+}
+
 void Resolver::Visit(ExprStmt &stmt) {
   Resolve(stmt.expr);
 }
@@ -207,11 +215,13 @@ void Resolver::Visit(ClassStmt &stmt) {
   class_type =  CLASS_TYPE_CLASS;
   Declare(stmt.name);
   Define(stmt.name);
+  if (stmt.superclass && (stmt.superclass->token->lexeme.compare(stmt.name->lexeme) == 0)) {
+    LoxError(stmt.superclass->token, "A class can't inherit from itself.");
+  }
   if (stmt.superclass) {
-    if (stmt.superclass->token->lexeme.compare(stmt.name->lexeme) == 0) {
-      LoxError(stmt.superclass->token, "A class can't inherit from itself.");
-    }
     Resolve(stmt.superclass);
+    BeginScope();
+    scopes.back()["super"] = true;
   }
   BeginScope();
   // define "this" in an implicit scope just outside of the block for the method body.
@@ -224,5 +234,8 @@ void Resolver::Visit(ClassStmt &stmt) {
     ResolveFunction(*(method.get()), type);
   }
   EndScope();
+  if (stmt.superclass) {
+    EndScope();
+  }
   class_type = prev;
 }

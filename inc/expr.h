@@ -154,4 +154,14 @@ public:
   token_t keyword;
 };
 
+class SuperExpr : public Expr {
+public:
+  SuperExpr(token_t keyword, token_t method) : keyword(keyword), method(method) {}
+  Value Accept(Visitor &visitor) {
+    return visitor.Visit(*this);
+  }
+  token_t keyword;
+  token_t method;
+};
+
 #endif

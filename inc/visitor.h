@@ -18,6 +18,7 @@ class CallExpr;
 class GetExpr;
 class SetExpr;
 class ThisExpr;
+class SuperExpr;
 class PrintStmt;
 class BlockStmt;
 class VarStmt;
@@ -45,6 +46,7 @@ public:
   virtual Value Visit(GetExpr &expr) = 0;
   virtual Value Visit(SetExpr &expr) = 0;
   virtual Value Visit(ThisExpr &expr) = 0;
+  virtual Value Visit(SuperExpr &expr) = 0;
   virtual void Visit(ExprStmt &stmt) = 0;
   virtual void Visit(PrintStmt &stmt) = 0;
   virtual void Visit(BlockStmt &stmt) = 0;

@@ -214,6 +214,36 @@ Value Interpreter::Visit(ThisExpr &expr) {
   return LookupVariable(expr.keyword, &expr);
 }
 
+Value Interpreter::Visit(SuperExpr &expr) {
+  Value val = LookupVariable(expr.keyword, &expr);
+  if (!(val.isLoxCallable() && dynamic_pointer_cast<LoxClass>(val.getLoxCallable()))) {
+    throw RuntimeException(expr.keyword, "Super keyword not bind to class.");
+  }
+
+  auto superklass = dynamic_pointer_cast<LoxClass>(val.getLoxCallable());
+  lox_func_t raw_method = superklass->FindMethod(expr.method->lexeme);
+  if (raw_method == nullptr) {
+    throw RuntimeException(expr.method,
+      "Can't find method <" + expr.method->lexeme+ "> in superclass <" + superklass->name + ">.");
+  }
+
+  lox_instance_t instance;
+  if (locals.count(&expr)) {
+    int depth = locals[&expr];
+    auto val = cur_env->GetAt(depth - 1, "this");
+    if (!(val.isLoxInstance())) {
+      throw RuntimeException(expr.keyword, "Can't find proper 'this' instance in super expr.");
+    }
+    instance = val.getLoxInstance();
+  }
+  if (instance == nullptr) {
+    throw RuntimeException(expr.keyword, "Invalid instance when make lox function for method.");
+  }
+  auto method = raw_method->Bind(instance);
+  lox_callable_t callable(method); // upcast
+  return callable;
+}
+
 void Interpreter::Visit(ExprStmt &stmt) {
   Value value = Evaluate(stmt.expr);
 }
@@ -274,14 +304,21 @@ void Interpreter::Visit(ReturnStmt &stmt) {
 
 void Interpreter::Visit(ClassStmt &stmt) {
   lox_class_t superclass;
+  Value superclass_val;
   if (stmt.superclass) {
-    Value val = Evaluate(stmt.superclass);
-    if (!(val.isLoxCallable() && dynamic_pointer_cast<LoxClass>(val.getLoxCallable()))) {
+    superclass_val = Evaluate(stmt.superclass);
+    if (!(superclass_val.isLoxCallable() && dynamic_pointer_cast<LoxClass>(superclass_val.getLoxCallable()))) {
       throw RuntimeException(stmt.superclass->token, "Superclass must be a class.");
     }
-    superclass = dynamic_pointer_cast<LoxClass>(val.getLoxCallable());
+    superclass = dynamic_pointer_cast<LoxClass>(superclass_val.getLoxCallable());
   }
+
   cur_env->Define(stmt.name->lexeme, Value());
+
+  if (stmt.superclass) {
+    cur_env = new Environment(cur_env); // store "super" name
+    cur_env->Define("super", superclass_val);
+  }
 
   map<string, lox_func_t> methods;
   for (auto func_stmt : stmt.methods) {
@@ -291,6 +328,11 @@ void Interpreter::Visit(ClassStmt &stmt) {
   }
 
   lox_callable_t klass(new LoxClass(stmt.name->lexeme, superclass, methods)); // upcast
+
+  if (stmt.superclass) {
+    cur_env = cur_env->enclosing;
+  }
+
   cur_env->Assign(stmt.name, klass);
 }
 

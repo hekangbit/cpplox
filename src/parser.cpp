@@ -227,17 +227,23 @@ expr_t Parser::Primary() {
   }
   if (Match({LEFT_PAREN})) {
     expr_t expr = Expression();
-    Consume(RIGHT_PAREN, "expect ')' after expression.");
+    Consume(RIGHT_PAREN, "Expect ')' after expression.");
     return expr_t(new GroupingExpr(expr));
   }
   if (Match({_THIS})) {
     return expr_t(new ThisExpr(Previous()));
   }
+  if (Match({SUPER})) {
+    token_t keyword = Previous();
+    Consume(DOT, "Expect '.' after 'super'.");
+    token_t method = Consume(IDENTIFIER, "Expect superclass method name.");
+    return expr_t(new SuperExpr(keyword, method));
+  }
   if (Match({IDENTIFIER})) {
     token_t t = Previous();
     return expr_t(new VariableExpr(t));
   }
-  throw Error(Peek(), "expect expr.");
+  throw Error(Peek(), "Expect expr.");
   return nullptr;
 }
 

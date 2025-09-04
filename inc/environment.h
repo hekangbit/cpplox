@@ -22,7 +22,6 @@ public:
     childs.push_back(env);
   }
 
-private:
   unordered_map<string, Value> values;
   list<Environment*> childs;
   Environment *enclosing;
