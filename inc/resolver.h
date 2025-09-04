@@ -19,7 +19,8 @@ public:
 
   typedef enum {
     CLASS_TYPE_NONE,
-    CLASS_TYPE_CLASS
+    CLASS_TYPE_CLASS,
+    CLASS_TYPE_SUBCLASS
   } ClassType;
 
   Resolver(Interpreter *interpreter)

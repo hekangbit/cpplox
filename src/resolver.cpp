@@ -153,6 +153,8 @@ Value Resolver::Visit(ThisExpr &expr) {
 Value Resolver::Visit(SuperExpr &expr) {
   if (class_type == CLASS_TYPE_NONE) {
     LoxError(expr.keyword, "Can't use 'super' outside of a class.");
+  } else if (class_type != CLASS_TYPE_SUBCLASS) {
+    LoxError(expr.keyword, "Can't use 'super' in a class without superclass.");
   }
   ResolveLocal(&expr, expr.keyword);
   return Value();
@@ -219,6 +221,7 @@ void Resolver::Visit(ClassStmt &stmt) {
     LoxError(stmt.superclass->token, "A class can't inherit from itself.");
   }
   if (stmt.superclass) {
+    class_type = CLASS_TYPE_SUBCLASS;
     Resolve(stmt.superclass);
     BeginScope();
     scopes.back()["super"] = true;
