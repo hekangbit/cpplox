@@ -117,7 +117,8 @@ expr_t Parser::Assignment() {
       return expr_t(new AssignExpr(var->token, value));
     }
     if (dynamic_pointer_cast<VariableExpr>(expr)) {
-      return expr_t(new AssignExpr(dynamic_pointer_cast<VariableExpr>(expr)->token, value));
+      return expr_t(new AssignExpr(
+          dynamic_pointer_cast<VariableExpr>(expr)->token, value));
     } else if (dynamic_pointer_cast<GetExpr>(expr)) {
       auto getexpr = dynamic_pointer_cast<GetExpr>(expr);
       return expr_t(new SetExpr(getexpr->object, getexpr->name, value));

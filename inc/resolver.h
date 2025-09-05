@@ -24,7 +24,8 @@ public:
   } ClassType;
 
   Resolver(Interpreter *interpreter)
-      : interpreter(interpreter), func_type(FUNC_TYPE_NONE), class_type(CLASS_TYPE_NONE) {}
+      : interpreter(interpreter), func_type(FUNC_TYPE_NONE),
+        class_type(CLASS_TYPE_NONE) {}
 
   void Declare(token_t token);
   void Define(token_t token);

@@ -136,7 +136,8 @@ public:
 
 class SetExpr : public Expr {
 public:
-  SetExpr(expr_t object, token_t name, expr_t value) : object(object), name(name), value(value) {}
+  SetExpr(expr_t object, token_t name, expr_t value)
+      : object(object), name(name), value(value) {}
   Value Accept(Visitor &visitor) {
     return visitor.Visit(*this);
   }
@@ -156,7 +157,8 @@ public:
 
 class SuperExpr : public Expr {
 public:
-  SuperExpr(token_t keyword, token_t method) : keyword(keyword), method(method) {}
+  SuperExpr(token_t keyword, token_t method)
+      : keyword(keyword), method(method) {}
   Value Accept(Visitor &visitor) {
     return visitor.Visit(*this);
   }

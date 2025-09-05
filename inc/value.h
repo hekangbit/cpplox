@@ -1,8 +1,8 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-#include <variant>
 #include "common.h"
+#include <variant>
 
 class LoxInstance;
 using lox_instance_t = shared_ptr<LoxInstance>;
@@ -62,7 +62,8 @@ public:
   }
 
 private:
-  variant<monostate, int, double, bool, string, lox_callable_t, lox_instance_t> data;
+  variant<monostate, int, double, bool, string, lox_callable_t, lox_instance_t>
+      data;
 };
 
 #endif

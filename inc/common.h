@@ -4,9 +4,11 @@
 #include <cassert>
 #include <chrono>
 #include <cstring>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <map>
 #include <memory>
 #include <stack>
@@ -14,10 +16,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <list>
-#include <vector>
 #include <unordered_map>
-#include <exception>
+#include <vector>
 
 using namespace std;
 

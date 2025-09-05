@@ -214,10 +214,11 @@ void Resolver::Visit(ReturnStmt &stmt) {
 
 void Resolver::Visit(ClassStmt &stmt) {
   ClassType prev = class_type;
-  class_type =  CLASS_TYPE_CLASS;
+  class_type = CLASS_TYPE_CLASS;
   Declare(stmt.name);
   Define(stmt.name);
-  if (stmt.superclass && (stmt.superclass->token->lexeme.compare(stmt.name->lexeme) == 0)) {
+  if (stmt.superclass &&
+      (stmt.superclass->token->lexeme.compare(stmt.name->lexeme) == 0)) {
     LoxError(stmt.superclass->token, "A class can't inherit from itself.");
   }
   if (stmt.superclass) {
@@ -227,7 +228,8 @@ void Resolver::Visit(ClassStmt &stmt) {
     scopes.back()["super"] = true;
   }
   BeginScope();
-  // define "this" in an implicit scope just outside of the block for the method body.
+  // define "this" in an implicit scope just outside of the block for the method
+  // body.
   scopes.back()["this"] = true;
   for (auto method : stmt.methods) {
     FunctionType type = FUNC_TYPE_METHOD;

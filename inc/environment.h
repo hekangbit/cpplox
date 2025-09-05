@@ -23,7 +23,7 @@ public:
   }
 
   unordered_map<string, Value> values;
-  list<Environment*> childs;
+  list<Environment *> childs;
   Environment *enclosing;
 };
 

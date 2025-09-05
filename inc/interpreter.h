@@ -2,14 +2,14 @@
 #define INTERPRETER_H
 
 #include "common.h"
+#include "environment.h"
 #include "expr.h"
 #include "loxerror.h"
+#include "loxfunction.h"
+#include "rtexception.h"
 #include "stmt.h"
 #include "value.h"
 #include "visitor.h"
-#include "rtexception.h"
-#include "environment.h"
-#include "loxfunction.h"
 
 class RuntimeBreak : public exception {
 public:

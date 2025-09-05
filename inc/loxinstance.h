@@ -2,8 +2,8 @@
 #define LOXINSTANCE_H
 
 #include "common.h"
-#include "token.h"
 #include "loxclass.h"
+#include "token.h"
 
 class LoxInstance {
 public:
