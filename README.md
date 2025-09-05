@@ -1,6 +1,6 @@
 # cpplox
-this is a lox interpreter project, it is a tree-walk interpreter.<br>
-The original author implemented it in java, but this code has implemented it in CPP<br>
+this is a tree-walk interpreter project for lox-language.<br>
+The original project was implemented in java, here I use CPP.<br>
 
 ## build & run
 mkdir build<br>
@@ -19,4 +19,6 @@ Chapter 4-13
 ### 1 break [done]
 support break in loop stmt
 
-### 2 static method [to-do]
+### 2 delete env to avoid asan report issue [to-do]
+
+### 3 static method [to-do]
